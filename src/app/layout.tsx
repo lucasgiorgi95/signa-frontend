@@ -26,9 +26,9 @@ export default function RootLayout({
         <BrandProvider>
           <div className="flex min-h-screen w-full">
             <Sidebar />
-            <div className="flex-1 overflow-auto">
-              <main className="h-full">
-                <div className="p-0">
+            <div className="flex-1 overflow-auto bg-white">
+              <main className="h-full bg-white">
+                <div className="p-0 pt-20 md:pt-0 bg-white min-h-screen">
                   <div className="w-full max-w-none">
                     {children}
                   </div>
