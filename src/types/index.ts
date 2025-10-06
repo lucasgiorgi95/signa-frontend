@@ -118,9 +118,9 @@ export interface ProductUpdate {
 
 // Tipos para movimientos de stock
 export enum MovementType {
-  IN = "IN",
-  OUT = "OUT",
-  ADJUST = "ADJUST"
+  IN = "entrada",
+  OUT = "salida",
+  ADJUST = "ajuste"
 }
 
 export interface StockMovement {

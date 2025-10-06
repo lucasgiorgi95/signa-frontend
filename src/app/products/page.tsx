@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useProducts } from '@/hooks/useProducts';
 import { useReports } from '@/hooks/useReports';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import EditProductSidebar from '@/components/EditProductSidebar';
 import Link from 'next/link';
 import { Product } from '@/types';
 import AddIcon from '@mui/icons-material/Add';
@@ -32,16 +33,18 @@ export default function ProductsPage() {
   
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState<'all' | 'low-stock' | 'out-of-stock'>('all');
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          product.code.toLowerCase().includes(searchTerm.toLowerCase());
     
     if (filter === 'low-stock') {
-      return matchesSearch && product.current_stock <= product.min_stock && product.current_stock > 0;
+      return matchesSearch && product.stock <= product.min_stock && product.stock > 0;
     }
     if (filter === 'out-of-stock') {
-      return matchesSearch && product.current_stock === 0;
+      return matchesSearch && product.stock === 0;
     }
     return matchesSearch;
   });
@@ -53,6 +56,20 @@ export default function ProductsPage() {
         fetchProducts();
       }
     }
+  };
+
+  const handleEdit = (product: Product) => {
+    setSelectedProduct(product);
+    setSidebarOpen(true);
+  };
+
+  const handleSidebarClose = () => {
+    setSidebarOpen(false);
+    setSelectedProduct(null);
+  };
+
+  const handleSidebarSave = () => {
+    fetchProducts(); // Refresh products list
   };
 
   if (loading && products.length === 0) {
@@ -224,7 +241,7 @@ export default function ProductsPage() {
                               <div className="flex items-center space-x-4">
                                 <div className="text-right">
                                   <p className="text-sm font-medium text-gray-900">
-                                    Stock: {product.current_stock}
+                                    Stock: {product.stock}
                                   </p>
                                   <p className="text-xs text-gray-500">
                                     Mín: {product.min_stock}
@@ -232,15 +249,15 @@ export default function ProductsPage() {
                                 </div>
                                 <div>
                                   <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                    product.current_stock === 0
+                                    product.stock === 0
                                       ? 'bg-red-100 text-red-800'
-                                      : product.current_stock <= product.min_stock
+                                      : product.stock <= product.min_stock
                                       ? 'bg-yellow-100 text-yellow-800'
                                       : 'bg-green-100 text-green-800'
                                   }`}>
-                                    {product.current_stock === 0
+                                    {product.stock === 0
                                       ? 'Sin stock'
-                                      : product.current_stock <= product.min_stock
+                                      : product.stock <= product.min_stock
                                       ? 'Stock bajo'
                                       : 'En stock'
                                     }
@@ -252,20 +269,13 @@ export default function ProductsPage() {
                         </div>
                       </div>
                       <div className="flex items-center space-x-2 ml-4">
-                        <Link
-                          href={`/products/${product.id}/adjust`}
+                        <button
+                          onClick={() => handleEdit(product)}
                           className="text-blue-600 hover:text-blue-900 p-1"
-                          title="Ajustar stock"
+                          title="Editar producto y stock"
                         >
                           <EditIcon className="h-4 w-4" />
-                        </Link>
-                        <Link
-                          href={`/products/${product.id}/edit`}
-                          className="text-gray-600 hover:text-gray-900 p-1"
-                          title="Editar producto"
-                        >
-                          <EditIcon className="h-4 w-4" />
-                        </Link>
+                        </button>
                         <button
                           onClick={() => handleDelete(product.id, product.name)}
                           className="text-red-600 hover:text-red-900 p-1"
@@ -291,13 +301,13 @@ export default function ProductsPage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-yellow-600">
-                    {filteredProducts.filter(p => p.current_stock <= p.min_stock && p.current_stock > 0).length}
+                    {filteredProducts.filter(p => p.stock <= p.min_stock && p.stock > 0).length}
                   </p>
                   <p className="text-sm text-gray-500">Stock bajo</p>
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-red-600">
-                    {filteredProducts.filter(p => p.current_stock === 0).length}
+                    {filteredProducts.filter(p => p.stock === 0).length}
                   </p>
                   <p className="text-sm text-gray-500">Sin stock</p>
                 </div>
@@ -305,6 +315,14 @@ export default function ProductsPage() {
             </div>
           )}
         </div>
+
+        {/* Edit Product Sidebar */}
+        <EditProductSidebar
+          product={selectedProduct}
+          isOpen={sidebarOpen}
+          onClose={handleSidebarClose}
+          onSave={handleSidebarSave}
+        />
       </div>
     </ProtectedRoute>
   );

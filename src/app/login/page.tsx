@@ -107,17 +107,17 @@ export default function LoginPage() {
                 🎯 ¿Quieres probar sin registrarte?
               </h3>
               <p className="text-sm text-green-700 mb-3">
-                Usa estas credenciales demo con datos reales:
+                Usa estas credenciales de administrador:
               </p>
               <div className="bg-white rounded-md p-3 border border-green-200">
                 <div className="text-sm font-mono">
                   <div className="mb-1">
-                    <span className="text-gray-600">Usuario:</span>{' '}
-                    <span className="font-semibold text-green-700">demo</span>
+                    <span className="text-gray-600">Email:</span>{' '}
+                    <span className="font-semibold text-green-700">admin@test.com</span>
                   </div>
                   <div>
                     <span className="text-gray-600">Contraseña:</span>{' '}
-                    <span className="font-semibold text-green-700">123456</span>
+                    <span className="font-semibold text-green-700">admin123</span>
                   </div>
                 </div>
               </div>
@@ -125,8 +125,8 @@ export default function LoginPage() {
                 type="button"
                 onClick={() => {
                   setCredentials({
-                    username: 'demo',
-                    password: '123456'
+                    username: 'admin@test.com',
+                    password: 'admin123'
                   });
                 }}
                 className="mt-3 text-sm text-green-600 hover:text-green-800 font-medium"

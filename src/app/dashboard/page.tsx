@@ -165,20 +165,32 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Botón de Escanear Prominente */}
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-xl">
+          {/* Anuncio PWA - Escáner Próximamente */}
+          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-white shadow-xl border-2 border-indigo-300">
             <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold mb-2">Escanear Código de Barras</h2>
-                <p className="text-blue-100">Gestiona tu inventario de forma rápida y sencilla</p>
+              <div className="flex-1">
+                <div className="flex items-center mb-3">
+                  <QrCodeScannerIcon className="h-8 w-8 mr-3" />
+                  <h2 className="text-2xl font-bold">📱 Escáner de Códigos - Próximamente</h2>
+                </div>
+                <p className="text-indigo-100 mb-2">
+                  El escáner de códigos de barras con cámara estará disponible cuando convirtamos la app en PWA
+                </p>
+                <div className="flex items-center text-sm text-indigo-200">
+                  <span className="mr-4">✨ Escáner en tiempo real</span>
+                  <span className="mr-4">📱 App instalable</span>
+                  <span>🔄 Funcionamiento offline</span>
+                </div>
               </div>
-              <Link
-                href="/scanner"
-                className="inline-flex items-center px-8 py-4 bg-white text-blue-600 font-semibold rounded-xl hover:bg-gray-50 transition-all duration-200 transform hover:scale-105 shadow-lg"
-              >
-                <QrCodeScannerIcon className="h-6 w-6 mr-3" />
-                Escanear Ahora
-              </Link>
+              <div className="ml-6">
+                <Link
+                  href="/scanner"
+                  className="inline-flex items-center px-6 py-3 bg-white text-indigo-600 font-semibold rounded-xl hover:bg-gray-50 transition-all duration-200 transform hover:scale-105 shadow-lg"
+                >
+                  <QrCodeScannerIcon className="h-5 w-5 mr-2" />
+                  Búsqueda Manual
+                </Link>
+              </div>
             </div>
           </div>
 
