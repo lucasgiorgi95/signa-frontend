@@ -9,9 +9,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
-import HistoryIcon from '@mui/icons-material/History';
 import AssessmentIcon from '@mui/icons-material/Assessment';
-import BusinessIcon from '@mui/icons-material/Business';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -35,18 +33,6 @@ const navigation = [
     href: '/products', 
     icon: <InventoryIcon fontSize="small" />,
     description: 'Gestionar inventario'
-  },
-  { 
-    name: 'Proveedores', 
-    href: '/suppliers', 
-    icon: <BusinessIcon fontSize="small" />,
-    description: 'Gestionar proveedores'
-  },
-  { 
-    name: 'Movimientos', 
-    href: '/movements', 
-    icon: <HistoryIcon fontSize="small" />,
-    description: 'Historial de stock'
   },
   { 
     name: 'Reportes', 

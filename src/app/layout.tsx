@@ -2,7 +2,6 @@
 
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { BrandProvider } from "@/context/BrandContext";
 import { AuthProvider } from "@/context/AuthContext";
 import LayoutContent from "@/components/LayoutContent";
 
@@ -25,11 +24,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans bg-white m-0 p-0`}>
         <AuthProvider>
-          <BrandProvider>
-            <LayoutContent>
-              {children}
-            </LayoutContent>
-          </BrandProvider>
+          <LayoutContent>
+            {children}
+          </LayoutContent>
         </AuthProvider>
       </body>
     </html>

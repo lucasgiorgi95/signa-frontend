@@ -1,18 +1,4 @@
-// Tipos existentes para marcas
-export interface Brand {
-  id: string;
-  name: string;
-  description: string;
-  owner: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface BrandFormData {
-  name: string;
-  description: string;
-  owner: string;
-}
+// Types cleaned up - removed unused brand types
 
 // Tipos para autenticación
 export interface User {
@@ -79,19 +65,9 @@ export interface Product {
   stock: number;
   min_stock: number;
   price?: number;
-  supplierId?: string;
-  marcaId?: string;
   userId: string;
   createdAt: string;
   updatedAt: string;
-  supplier?: {
-    id: string;
-    name: string;
-  };
-  marca?: {
-    id: string;
-    nombre: string;
-  };
 }
 
 export interface ProductCreate {
@@ -101,8 +77,6 @@ export interface ProductCreate {
   stock?: number;
   min_stock?: number;
   price?: number;
-  supplierId?: string;
-  marcaId?: string;
 }
 
 export interface ProductUpdate {
@@ -112,8 +86,6 @@ export interface ProductUpdate {
   stock?: number;
   min_stock?: number;
   price?: number;
-  supplierId?: string;
-  marcaId?: string;
 }
 
 // Tipos para movimientos de stock
