@@ -32,9 +32,12 @@ export default function RegisterPage() {
     }
 
     try {
+      console.log('🚀 Intentando registrar usuario:', userData);
       await register(userData);
+      console.log('✅ Registro exitoso, redirigiendo...');
       router.push('/dashboard');
     } catch (err) {
+      console.error('❌ Error en registro:', err);
       setError(err instanceof Error ? err.message : 'Error al registrar usuario');
     }
   };

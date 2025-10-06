@@ -14,9 +14,15 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('auth_token');
+    console.log('🔍 Token en localStorage:', token ? `${token.substring(0, 20)}...` : 'No token');
+    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log('✅ Token agregado al header Authorization');
+    } else {
+      console.log('❌ No hay token para agregar');
     }
+    
     return config;
   },
   (error) => {

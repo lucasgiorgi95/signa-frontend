@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { marcaService, Marca as APIMarca } from '@/services/api';
+import { useAuth } from '@/hooks/useAuth';
 
 interface Brand extends Omit<APIMarca, 'id' | 'dueno' | 'nombre'> {
   id: string;
@@ -26,19 +27,32 @@ const BrandContext = createContext<BrandContextType | undefined>(undefined);
 
 export function BrandProvider({ children }: { children: ReactNode }) {
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const { isAuthenticated, loading: authLoading } = useAuth();
 
-  // Cargar marcas al iniciar
+  // Cargar marcas solo cuando el usuario esté autenticado
   useEffect(() => {
-    refreshBrands();
-  }, []);
+    if (!authLoading && isAuthenticated) {
+      refreshBrands();
+    } else if (!authLoading && !isAuthenticated) {
+      // Limpiar marcas si no está autenticado
+      setBrands([]);
+      setLoading(false);
+    }
+  }, [isAuthenticated, authLoading]);
 
   // Función para refrescar la lista de marcas
   const refreshBrands = async () => {
+    if (!isAuthenticated) {
+      console.log('❌ No se pueden cargar marcas: usuario no autenticado');
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
+      console.log('🔍 Cargando marcas...');
       const marcas = await marcaService.getAll();
       setBrands(
         marcas.map((marca) => ({
@@ -48,6 +62,7 @@ export function BrandProvider({ children }: { children: ReactNode }) {
           description: marca.descripcion || '',
         }))
       );
+      console.log('✅ Marcas cargadas:', marcas.length);
     } catch (err) {
       setError('Error al cargar las marcas');
       console.error('Error fetching brands:', err);

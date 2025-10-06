@@ -4,29 +4,8 @@ export { productService } from './productService';
 export { stockService } from './stockService';
 export { movementService } from './movementService';
 
-// Mantener el servicio de marcas existente para compatibilidad
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
-async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.detail || 'Error en la petición');
-  }
-
-  if (response.status === 204) {
-    return {} as T;
-  }
-
-  return response.json();
-}
+// Importar apiClient para usar en el servicio de marcas
+import apiClient from './axios';
 
 export interface Marca {
   id: number;
@@ -47,33 +26,50 @@ export interface MarcaUpdate {
   descripcion?: string;
 }
 
+interface MarcaResponse {
+  success: boolean;
+  data: Marca | Marca[];
+  message?: string;
+}
+
 export const marcaService = {
   async getAll(): Promise<Marca[]> {
-    return fetchApi<Marca[]>('/marcas/');
+    const response = await apiClient.get<MarcaResponse>('/marcas');
+    if (!response.data.success) {
+      throw new Error(response.data.message || 'Error obteniendo marcas');
+    }
+    return Array.isArray(response.data.data) ? response.data.data : [];
   },
 
   async getById(id: number): Promise<Marca> {
-    return fetchApi<Marca>(`/marcas/${id}`);
+    const response = await apiClient.get<MarcaResponse>(`/marcas/${id}`);
+    if (!response.data.success) {
+      throw new Error(response.data.message || 'Error obteniendo marca');
+    }
+    return response.data.data as Marca;
   },
 
   async create(marca: MarcaCreate): Promise<Marca> {
-    return fetchApi<Marca>('/marcas/', {
-      method: 'POST',
-      body: JSON.stringify(marca),
-    });
+    const response = await apiClient.post<MarcaResponse>('/marcas', marca);
+    if (!response.data.success) {
+      throw new Error(response.data.message || 'Error creando marca');
+    }
+    return response.data.data as Marca;
   },
 
   async update(id: number, marca: MarcaUpdate): Promise<Marca> {
-    return fetchApi<Marca>(`/marcas/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(marca),
-    });
+    const response = await apiClient.put<MarcaResponse>(`/marcas/${id}`, marca);
+    if (!response.data.success) {
+      throw new Error(response.data.message || 'Error actualizando marca');
+    }
+    return response.data.data as Marca;
   },
 
   async delete(id: number): Promise<void> {
-    return fetchApi<void>(`/marcas/${id}`, {
-      method: 'DELETE',
-    });
+    const response = await apiClient.delete<MarcaResponse>(`/marcas/${id}`);
+    if (!response.data.success) {
+      throw new Error(response.data.message || 'Error eliminando marca');
+    }
   },
 };
 

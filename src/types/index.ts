@@ -43,17 +43,19 @@ export interface AuthToken {
 export interface Supplier {
   id: string;
   name: string;
-  contact_person?: string;
+  contact?: string;
   phone?: string;
   email?: string;
   address?: string;
-  user_id: string;
-  created_at: string;
+  isActive?: boolean;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface SupplierCreate {
   name: string;
-  contact_person?: string;
+  contact?: string;
   phone?: string;
   email?: string;
   address?: string;
@@ -61,10 +63,11 @@ export interface SupplierCreate {
 
 export interface SupplierUpdate {
   name?: string;
-  contact_person?: string;
+  contact?: string;
   phone?: string;
   email?: string;
   address?: string;
+  isActive?: boolean;
 }
 
 // Tipos para productos
@@ -72,28 +75,45 @@ export interface Product {
   id: string;
   code: string;
   name: string;
-  current_stock: number;
+  description?: string;
+  stock: number;
   min_stock: number;
-  supplier_id?: string;
-  supplier_name?: string;
-  user_id: string;
-  created_at: string;
+  price?: number;
+  supplierId?: string;
+  marcaId?: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  supplier?: {
+    id: string;
+    name: string;
+  };
+  marca?: {
+    id: string;
+    nombre: string;
+  };
 }
 
 export interface ProductCreate {
   code: string;
   name: string;
-  current_stock: number;
-  min_stock: number;
-  supplier_id?: string;
+  description?: string;
+  stock?: number;
+  min_stock?: number;
+  price?: number;
+  supplierId?: string;
+  marcaId?: string;
 }
 
 export interface ProductUpdate {
   code?: string;
   name?: string;
-  current_stock?: number;
+  description?: string;
+  stock?: number;
   min_stock?: number;
-  supplier_id?: string;
+  price?: number;
+  supplierId?: string;
+  marcaId?: string;
 }
 
 // Tipos para movimientos de stock

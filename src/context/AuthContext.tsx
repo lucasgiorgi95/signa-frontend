@@ -31,15 +31,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const token = authService.getStoredToken();
         
         if (storedUser && token) {
-          // Verificar que el token siga siendo válido
-          try {
-            const currentUser = await authService.getCurrentUser();
-            setUser(currentUser);
-          } catch (error) {
-            // Token inválido, limpiar datos
-            authService.logout();
-            setUser(null);
-          }
+          // Solo usar los datos almacenados sin verificar con el servidor
+          // para evitar errores de conexión al cargar la página
+          setUser(storedUser);
         }
       } catch (error) {
         console.error('Error inicializando autenticación:', error);

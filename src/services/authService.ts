@@ -3,30 +3,52 @@ import { User, LoginCredentials, RegisterData, AuthToken } from '@/types';
 
 export const authService = {
   async login(credentials: LoginCredentials): Promise<{ user: User; token: string }> {
-    const response = await apiClient.post<AuthToken>('/auth/login', credentials);
-    const { access_token } = response.data;
+    const response = await apiClient.post('/auth/login', credentials);
+    
+    if (!response.data.success) {
+      throw new Error(response.data.message || 'Error en el login');
+    }
+    
+    const { user, token } = response.data.data;
+    
+    console.log('💾 Guardando token:', token ? `${token.substring(0, 20)}...` : 'No token');
+    console.log('👤 Guardando usuario:', user);
     
     // Guardar token
-    localStorage.setItem('auth_token', access_token);
-    
-    // Obtener datos del usuario
-    const userResponse = await apiClient.get<User>('/auth/me');
-    const user = userResponse.data;
+    localStorage.setItem('auth_token', token);
     
     // Guardar datos del usuario
     localStorage.setItem('user_data', JSON.stringify(user));
     
-    return { user, token: access_token };
+    // Verificar que se guardó correctamente
+    const savedToken = localStorage.getItem('auth_token');
+    console.log('✅ Token guardado verificado:', savedToken ? `${savedToken.substring(0, 20)}...` : 'No se guardó');
+    
+    return { user, token };
   },
 
   async register(userData: RegisterData): Promise<User> {
-    const response = await apiClient.post<User>('/auth/register', userData);
-    return response.data;
+    console.log('🔍 Enviando datos de registro:', userData);
+    
+    const response = await apiClient.post('/auth/register', userData);
+    
+    console.log('📊 Respuesta del servidor:', response.data);
+    
+    if (!response.data.success) {
+      throw new Error(response.data.message || 'Error en el registro');
+    }
+    
+    return response.data.data.user;
   },
 
   async getCurrentUser(): Promise<User> {
-    const response = await apiClient.get<User>('/auth/me');
-    return response.data;
+    const response = await apiClient.get('/auth/me');
+    
+    if (!response.data.success) {
+      throw new Error(response.data.message || 'Error obteniendo usuario');
+    }
+    
+    return response.data.data;
   },
 
   logout(): void {
