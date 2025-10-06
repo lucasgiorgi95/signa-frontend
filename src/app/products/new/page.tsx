@@ -56,11 +56,11 @@ export default function NewProductPage() {
       setError('El nombre del producto es requerido');
       return;
     }
-    if (formData.stock < 0) {
+    if (formData.stock !== undefined && formData.stock < 0) {
       setError('El stock actual no puede ser negativo');
       return;
     }
-    if (formData.min_stock < 0) {
+    if (formData.min_stock !== undefined && formData.min_stock < 0) {
       setError('El stock mínimo no puede ser negativo');
       return;
     }

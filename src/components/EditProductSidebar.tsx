@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Product } from '@/types';
+import { Product, MovementType } from '@/types';
 import { useProducts } from '@/hooks/useProducts';
 import { useStock } from '@/hooks/useStock';
 import CloseIcon from '@mui/icons-material/Close';
@@ -89,7 +89,7 @@ export default function EditProductSidebar({
       await adjustStock({
         product_id: product.id,
         quantity: stockData.quantity,
-        type: stockData.quantity > product.stock ? 'entrada' : 'salida',
+        type: stockData.quantity > product.stock ? MovementType.IN : MovementType.OUT,
         reason: stockData.reason
       });
       setSuccess('Stock ajustado correctamente');

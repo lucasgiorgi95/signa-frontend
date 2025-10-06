@@ -30,10 +30,11 @@ export default function ProductMovementsPage() {
           id: params.productId as string,
           code: '123456789',
           name: 'Producto de Ejemplo',
-          current_stock: 45,
+          stock: 45,
           min_stock: 10,
-          user_id: 'user-1',
-          created_at: new Date().toISOString()
+          userId: 'user-1',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         };
         
         // Mock movements data
@@ -212,7 +213,7 @@ export default function ProductMovementsPage() {
                   <p className="text-sm text-gray-500">Código: {product.code}</p>
                   <div className="mt-2 flex items-center space-x-4">
                     <span className="text-sm text-gray-700">
-                      Stock actual: <span className="font-semibold text-lg">{product.current_stock}</span>
+                      Stock actual: <span className="font-semibold text-lg">{product.stock}</span>
                     </span>
                     <span className="text-sm text-gray-700">
                       Stock mínimo: <span className="font-medium">{product.min_stock}</span>

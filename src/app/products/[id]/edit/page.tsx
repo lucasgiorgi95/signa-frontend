@@ -18,7 +18,7 @@ export default function EditProductPage() {
   const [formData, setFormData] = useState<ProductUpdate>({
     code: '',
     name: '',
-    current_stock: 0,
+    stock: 0,
     min_stock: 0
   });
   const [error, setError] = useState<string | null>(null);
@@ -33,17 +33,18 @@ export default function EditProductPage() {
           id: params.id as string,
           code: '123456789',
           name: 'Producto de Ejemplo',
-          current_stock: 50,
+          stock: 50,
           min_stock: 10,
-          user_id: 'user-1',
-          created_at: new Date().toISOString()
+          userId: 'user-1',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         };
         
         setProduct(mockProduct);
         setFormData({
           code: mockProduct.code,
           name: mockProduct.name,
-          current_stock: mockProduct.current_stock,
+          stock: mockProduct.stock,
           min_stock: mockProduct.min_stock
         });
       } catch (err) {
@@ -162,15 +163,15 @@ export default function EditProductPage() {
 
               {/* Stock Actual */}
               <div>
-                <label htmlFor="current_stock" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="stock" className="block text-sm font-medium text-gray-700">
                   Stock Actual
                 </label>
                 <input
                   type="number"
-                  id="current_stock"
-                  name="current_stock"
+                  id="stock"
+                  name="stock"
                   min="0"
-                  value={formData.current_stock}
+                  value={formData.stock}
                   onChange={handleChange}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />

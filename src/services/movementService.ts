@@ -1,5 +1,5 @@
 import apiClient from './axios';
-import { StockMovement, StockMovementCreate } from '@/types';
+import { StockMovement, StockMovementCreate, MovementType } from '@/types';
 
 interface MovementResponse {
   success: boolean;
@@ -17,7 +17,7 @@ export const movementService = {
     // Mapear los datos al formato del backend Node.js
     const payload = {
       productId: movementData.product_id,
-      type: movementData.type === 'IN' ? 'entrada' : 'salida',
+      type: movementData.type === MovementType.IN ? 'entrada' : 'salida',
       quantity: movementData.quantity,
       reason: movementData.reason || 'Movimiento de stock'
     };

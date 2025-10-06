@@ -46,10 +46,11 @@ export default function AdjustStockPage() {
             id: params.id as string,
             code: '123456789',
             name: 'Producto de Ejemplo',
-            current_stock: 50,
+            stock: 50,
             min_stock: 10,
-            user_id: 'user-1',
-            created_at: new Date().toISOString()
+            userId: 'user-1',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
           };
           setProduct(mockProduct);
         }
@@ -80,7 +81,7 @@ export default function AdjustStockPage() {
         // Actualizar el stock local
         setProduct(prev => prev ? {
           ...prev,
-          current_stock: prev.current_stock + amount
+          stock: prev.stock + amount
         } : null);
         
         // Limpiar formulario
@@ -110,7 +111,7 @@ export default function AdjustStockPage() {
         // Actualizar el stock local
         setProduct(prev => prev ? {
           ...prev,
-          current_stock: prev.current_stock + adjustmentAmount
+          stock: prev.stock + adjustmentAmount
         } : null);
         
         // Limpiar formulario
@@ -184,7 +185,7 @@ export default function AdjustStockPage() {
                 <p className="text-sm text-gray-500">Código: {product.code}</p>
                 <div className="mt-2 flex items-center space-x-4">
                   <span className="text-sm text-gray-700">
-                    Stock actual: <span className="font-semibold text-lg">{product.current_stock}</span>
+                    Stock actual: <span className="font-semibold text-lg">{product.stock}</span>
                   </span>
                   <span className="text-sm text-gray-700">
                     Stock mínimo: <span className="font-medium">{product.min_stock}</span>
@@ -192,15 +193,15 @@ export default function AdjustStockPage() {
                 </div>
                 <div className="mt-2">
                   <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                    product.current_stock === 0
+                    product.stock === 0
                       ? 'bg-red-100 text-red-800'
-                      : product.current_stock <= product.min_stock
+                      : product.stock <= product.min_stock
                       ? 'bg-yellow-100 text-yellow-800'
                       : 'bg-green-100 text-green-800'
                   }`}>
-                    {product.current_stock === 0
+                    {product.stock === 0
                       ? 'Sin stock'
-                      : product.current_stock <= product.min_stock
+                      : product.stock <= product.min_stock
                       ? 'Stock bajo'
                       : 'En stock'
                     }
@@ -240,7 +241,7 @@ export default function AdjustStockPage() {
                     <button
                       key={`out-${amount}`}
                       onClick={() => handleQuickAdjust(-amount)}
-                      disabled={loading || product.current_stock < amount}
+                      disabled={loading || product.stock < amount}
                       className="flex items-center justify-center px-3 py-2 border border-red-300 text-sm font-medium rounded-md text-red-700 bg-red-50 hover:bg-red-100 disabled:opacity-50"
                     >
                       <RemoveIcon className="h-4 w-4 mr-1" />
