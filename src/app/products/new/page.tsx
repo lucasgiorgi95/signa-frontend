@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useProducts } from '@/hooks/useProducts';
-import { useSuppliers } from '@/hooks/useSuppliers';
+// Removed useSuppliers import - suppliers functionality disabled
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Link from 'next/link';
 import { ProductCreate } from '@/types';
@@ -14,14 +14,13 @@ export default function NewProductPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { createProduct, loading } = useProducts();
-  const { suppliers } = useSuppliers();
+  // Suppliers functionality disabled
   
   const [formData, setFormData] = useState<ProductCreate>({
     code: '',
     name: '',
-    current_stock: 0,
-    min_stock: 0,
-    supplier_id: ''
+    stock: 0,
+    min_stock: 0
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -57,7 +56,7 @@ export default function NewProductPage() {
       setError('El nombre del producto es requerido');
       return;
     }
-    if (formData.current_stock < 0) {
+    if (formData.stock < 0) {
       setError('El stock actual no puede ser negativo');
       return;
     }
@@ -141,15 +140,15 @@ export default function NewProductPage() {
 
               {/* Stock Actual */}
               <div>
-                <label htmlFor="current_stock" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="stock" className="block text-sm font-medium text-gray-700">
                   Stock Actual
                 </label>
                 <input
                   type="number"
-                  id="current_stock"
-                  name="current_stock"
+                  id="stock"
+                  name="stock"
                   min="0"
-                  value={formData.current_stock}
+                  value={formData.stock}
                   onChange={handleChange}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
@@ -177,35 +176,23 @@ export default function NewProductPage() {
                 </p>
               </div>
 
-              {/* Proveedor */}
+              {/* Descripción */}
               <div>
-                <label htmlFor="supplier_id" className="block text-sm font-medium text-gray-700">
-                  Proveedor (Opcional)
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                  Descripción (Opcional)
                 </label>
-                <select
-                  id="supplier_id"
-                  name="supplier_id"
-                  value={formData.supplier_id}
+                <input
+                  type="text"
+                  id="description"
+                  name="description"
+                  value={formData.description || ''}
                   onChange={handleChange}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">Sin proveedor</option>
-                  {suppliers.map((supplier) => (
-                    <option key={supplier.id} value={supplier.id}>
-                      {supplier.name}
-                    </option>
-                  ))}
-                </select>
+                  placeholder="Descripción del producto"
+                />
                 <p className="mt-1 text-sm text-gray-500">
-                  Selecciona un proveedor para facilitar reposiciones
+                  Información adicional sobre el producto
                 </p>
-                {suppliers.length === 0 && (
-                  <p className="mt-1 text-sm text-blue-600">
-                    <Link href="/suppliers/new" className="hover:underline">
-                      Crear primer proveedor →
-                    </Link>
-                  </p>
-                )}
               </div>
 
               {/* Botones */}
