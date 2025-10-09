@@ -48,7 +48,7 @@ export default function AdjustStockPage() {
             name: 'Producto de Ejemplo',
             stock: 50,
             min_stock: 10,
-            user_id: 'user-uuid-1',
+            price: 0,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           };

@@ -15,6 +15,7 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import TableViewIcon from '@mui/icons-material/TableView';
+import BugReportIcon from '@mui/icons-material/BugReport';
 
 export default function ProductsPage() {
   const { 

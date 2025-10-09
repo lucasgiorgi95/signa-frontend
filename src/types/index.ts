@@ -65,10 +65,9 @@ export interface Product {
   description?: string;
   stock: number;
   min_stock: number;
-  price?: number;
+  price: number; // Campo requerido en tu esquema
   image_url?: string;
   is_active?: boolean;
-  user_id?: string; // UUID del usuario que creó el producto
   created_at: string;
   updated_at: string;
 }
@@ -79,6 +78,7 @@ export interface ProductCreate {
   description?: string;
   stock?: number;
   min_stock?: number;
+  price?: number;
 }
 
 export interface ProductUpdate {
@@ -87,6 +87,7 @@ export interface ProductUpdate {
   description?: string;
   stock?: number;
   min_stock?: number;
+  price?: number;
 }
 
 // Tipos para movimientos de stock

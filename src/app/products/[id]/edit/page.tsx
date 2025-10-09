@@ -20,7 +20,8 @@ export default function EditProductPage() {
     name: '',
     description: '',
     stock: 0,
-    min_stock: 0
+    min_stock: 0,
+    price: 0
   });
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,7 +38,7 @@ export default function EditProductPage() {
           description: 'Descripción de ejemplo del producto',
           stock: 50,
           min_stock: 10,
-          user_id: 'user-uuid-1',
+          price: 0,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         };
@@ -48,7 +49,8 @@ export default function EditProductPage() {
           name: mockProduct.name,
           description: mockProduct.description,
           stock: mockProduct.stock,
-          min_stock: mockProduct.min_stock
+          min_stock: mockProduct.min_stock,
+          price: mockProduct.price
         });
       } catch (err) {
         setError('Error cargando producto');
@@ -66,7 +68,9 @@ export default function EditProductPage() {
     const { name, value, type } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'number' ? parseInt(value) || 0 : value
+      [name]: type === 'number' 
+        ? (name === 'price' ? parseFloat(value) || 0 : parseInt(value) || 0)
+        : value
     }));
   };
 
@@ -210,6 +214,23 @@ export default function EditProductPage() {
                   name="min_stock"
                   min="0"
                   value={formData.min_stock}
+                  onChange={handleChange}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              {/* Precio */}
+              <div>
+                <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+                  Precio
+                </label>
+                <input
+                  type="number"
+                  id="price"
+                  name="price"
+                  min="0"
+                  step="0.01"
+                  value={formData.price}
                   onChange={handleChange}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />

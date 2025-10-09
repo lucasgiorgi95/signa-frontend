@@ -21,7 +21,8 @@ export default function NewProductPage() {
     name: '',
     description: '',
     stock: 0,
-    min_stock: 0
+    min_stock: 5,
+    price: 0
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -40,7 +41,9 @@ export default function NewProductPage() {
     const { name, value, type } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'number' ? parseInt(value) || 0 : value
+      [name]: type === 'number' 
+        ? (name === 'price' ? parseFloat(value) || 0 : parseInt(value) || 0)
+        : value
     }));
   };
 
@@ -193,6 +196,27 @@ export default function NewProductPage() {
                 />
                 <p className="mt-1 text-sm text-gray-500">
                   Información adicional sobre el producto
+                </p>
+              </div>
+
+              {/* Precio */}
+              <div>
+                <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+                  Precio
+                </label>
+                <input
+                  type="number"
+                  id="price"
+                  name="price"
+                  min="0"
+                  step="0.01"
+                  value={formData.price}
+                  onChange={handleChange}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="0.00"
+                />
+                <p className="mt-1 text-sm text-gray-500">
+                  Precio del producto en la moneda local
                 </p>
               </div>
 

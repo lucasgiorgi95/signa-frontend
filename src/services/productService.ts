@@ -63,34 +63,43 @@ export const productService = {
   async create(productData: ProductCreate): Promise<Product> {
     console.log('🔄 Creando producto:', productData);
     
-    // Obtener el usuario actual
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      throw new Error('Usuario no autenticado');
-    }
+    const insertData = {
+      code: productData.code,
+      name: productData.name,
+      description: productData.description,
+      stock: productData.stock || 0,
+      min_stock: productData.min_stock || 5, // Default según tu esquema
+      price: 0, // Campo requerido en tu esquema
+    };
+    
+    console.log('📦 Datos a insertar:', insertData);
     
     const { data, error } = await supabase
       .from('products')
-      .insert({
-        code: productData.code,
-        name: productData.name,
-        description: productData.description,
-        stock: productData.stock || 0,
-        min_stock: productData.min_stock || 0,
-        user_id: user.id, // Agregar el ID del usuario
-      })
+      .insert(insertData)
       .select()
       .single();
     
     if (error) {
       console.error('❌ Error creando producto:', error);
+      console.error('❌ Error details:', JSON.stringify(error, null, 2));
       
       // Manejar errores específicos
       if (error.code === '23505') {
         throw new Error('Ya existe un producto con ese código de barras');
       }
       
-      throw new Error(error.message || 'Error creando producto');
+      if (error.code === '42501') {
+        throw new Error('No tienes permisos para crear productos');
+      }
+      
+      if (error.code === '23502') {
+        throw new Error('Faltan campos requeridos');
+      }
+      
+      // Si el error no tiene mensaje, usar el código o un mensaje genérico
+      const errorMessage = error.message || error.details || error.hint || `Error de base de datos (código: ${error.code})` || 'Error creando producto';
+      throw new Error(errorMessage);
     }
     
     console.log('✅ Producto creado:', data);
@@ -107,6 +116,7 @@ export const productService = {
     if (productData.description !== undefined) updateData.description = productData.description;
     if (productData.stock !== undefined) updateData.stock = productData.stock;
     if (productData.min_stock !== undefined) updateData.min_stock = productData.min_stock;
+    if (productData.price !== undefined) updateData.price = productData.price;
     
     const { data, error } = await supabase
       .from('products')
