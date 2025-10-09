@@ -163,36 +163,6 @@ export default function RegisterPage() {
               {loading ? "Creando cuenta..." : "Crear Cuenta"}
             </button>
           </div>
-
-          {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <div className="text-center">
-              <h3 className="text-sm font-medium text-blue-800 mb-2">
-                🚀 ¿Solo quieres probar la app?
-              </h3>
-              <p className="text-sm text-blue-700 mb-3">
-                Ve al login y usa estas credenciales demo:
-              </p>
-              <div className="bg-white rounded-md p-3 border border-blue-200">
-                <div className="text-sm font-mono">
-                  <div className="mb-1">
-                    <span className="text-gray-600">Usuario:</span>{" "}
-                    <span className="font-semibold text-blue-700">demo</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-600">Contraseña:</span>{" "}
-                    <span className="font-semibold text-blue-700">123456</span>
-                  </div>
-                </div>
-              </div>
-              <Link
-                href="/login"
-                className="mt-3 inline-block text-sm text-blue-600 hover:text-blue-800 font-medium"
-              >
-                👆 Ir al Login para probar →
-              </Link>
-            </div>
-          </div>
         </form>
       </div>
     </div>
