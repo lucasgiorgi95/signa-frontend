@@ -87,11 +87,6 @@ export interface ProductUpdate {
 }
 
 // Tipos para movimientos de stock
-export enum MovementType {
-  IN = "entrada",
-  OUT = "salida",
-  ADJUST = "ajuste"
-}
 
 export interface StockMovement {
   id: number;
@@ -105,7 +100,7 @@ export interface StockMovement {
 
 export interface StockMovementCreate {
   product_id: number;
-  type: MovementType;
+  type: string; // "entrada" | "salida" | "ajuste"
   quantity: number;
   reason?: string;
 }
@@ -113,7 +108,7 @@ export interface StockMovementCreate {
 export interface StockAdjust {
   product_id: number;
   quantity: number;
-  type: MovementType;
+  type: string; // "entrada" | "salida" | "ajuste"
   reason?: string;
 }
 

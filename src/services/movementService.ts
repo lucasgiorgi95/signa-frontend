@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import { StockMovement, StockMovementCreate, MovementType } from '@/types';
+import { StockMovement, StockMovementCreate } from '@/types';
 
 export const movementService = {
   async create(movementData: StockMovementCreate): Promise<StockMovement> {
@@ -38,11 +38,11 @@ export const movementService = {
     }
 
     let newStock = product.stock;
-    if (movementData.type === MovementType.IN) {
+    if (movementData.type === "entrada") {
       newStock += movementData.quantity;
-    } else if (movementData.type === MovementType.OUT) {
+    } else if (movementData.type === "salida") {
       newStock -= movementData.quantity;
-    } else if (movementData.type === MovementType.ADJUST) {
+    } else if (movementData.type === "ajuste") {
       newStock = movementData.quantity; // Para ajustes, la cantidad es el nuevo stock
     }
 
@@ -94,7 +94,7 @@ export const movementService = {
     limit?: number; 
     dateFrom?: string; 
     dateTo?: string;
-    type?: MovementType;
+    type?: string;
   }): Promise<StockMovement[]> {
     let query = supabase
       .from('stock_movements')

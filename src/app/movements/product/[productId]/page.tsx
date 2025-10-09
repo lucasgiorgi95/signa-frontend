@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { useStock } from '@/hooks/useStock';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Link from 'next/link';
-import { StockMovement, Product, MovementType } from '@/types';
+import { StockMovement, Product } from '@/types';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import HistoryIcon from '@mui/icons-material/History';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
@@ -27,52 +27,51 @@ export default function ProductMovementsPage() {
       try {
         // Mock product data
         const mockProduct: Product = {
-          id: params.productId as string,
+          id: parseInt(params.productId as string) || 1,
           code: '123456789',
           name: 'Producto de Ejemplo',
           stock: 45,
           min_stock: 10,
-          userId: 'user-1',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         };
         
         // Mock movements data
         const mockMovements: StockMovement[] = [
           {
-            id: '1',
-            product_id: params.productId as string,
-            type: MovementType.IN,
+            id: 1,
+            product_id: parseInt(params.productId as string) || 1,
+            type: "entrada",
             quantity: 50,
             reason: 'Compra inicial de inventario',
-            user_id: 'user-1',
+            user_id: 1,
             created_at: new Date().toISOString()
           },
           {
-            id: '2',
-            product_id: params.productId as string,
-            type: MovementType.OUT,
+            id: 2,
+            product_id: parseInt(params.productId as string) || 1,
+            type: "salida",
             quantity: 3,
             reason: 'Venta a cliente',
-            user_id: 'user-1',
+            user_id: 1,
             created_at: new Date(Date.now() - 3600000).toISOString()
           },
           {
-            id: '3',
-            product_id: params.productId as string,
-            type: MovementType.OUT,
+            id: 3,
+            product_id: parseInt(params.productId as string) || 1,
+            type: "salida",
             quantity: 2,
             reason: 'Venta a cliente',
-            user_id: 'user-1',
+            user_id: 1,
             created_at: new Date(Date.now() - 7200000).toISOString()
           },
           {
-            id: '4',
-            product_id: params.productId as string,
-            type: MovementType.ADJUST,
+            id: 4,
+            product_id: parseInt(params.productId as string) || 1,
+            type: "ajuste",
             quantity: 45,
             reason: 'Ajuste por inventario físico',
-            user_id: 'user-1',
+            user_id: 1,
             created_at: new Date(Date.now() - 86400000).toISOString()
           }
         ];
@@ -96,26 +95,26 @@ export default function ProductMovementsPage() {
     }
   }, [params.productId]);
 
-  const getMovementIcon = (type: MovementType) => {
+  const getMovementIcon = (type: string) => {
     switch (type) {
-      case MovementType.IN:
+      case "entrada":
         return <TrendingUpIcon className="h-5 w-5 text-green-600" />;
-      case MovementType.OUT:
+      case "salida":
         return <TrendingDownIcon className="h-5 w-5 text-red-600" />;
-      case MovementType.ADJUST:
+      case "ajuste":
         return <SwapHorizIcon className="h-5 w-5 text-blue-600" />;
       default:
         return <HistoryIcon className="h-5 w-5 text-gray-600" />;
     }
   };
 
-  const getMovementColor = (type: MovementType) => {
+  const getMovementColor = (type: string) => {
     switch (type) {
-      case MovementType.IN:
+      case "entrada":
         return 'bg-green-100 text-green-800';
-      case MovementType.OUT:
+      case "salida":
         return 'bg-red-100 text-red-800';
-      case MovementType.ADJUST:
+      case "ajuste":
         return 'bg-blue-100 text-blue-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -132,13 +131,13 @@ export default function ProductMovementsPage() {
     });
   };
 
-  const getMovementTypeLabel = (type: MovementType) => {
+  const getMovementTypeLabel = (type: string) => {
     switch (type) {
-      case MovementType.IN:
+      case "entrada":
         return 'Entrada';
-      case MovementType.OUT:
+      case "salida":
         return 'Salida';
-      case MovementType.ADJUST:
+      case "ajuste":
         return 'Ajuste';
       default:
         return 'Desconocido';
@@ -146,9 +145,9 @@ export default function ProductMovementsPage() {
   };
 
   // Calcular estadísticas
-  const totalEntries = movements.filter(m => m.type === MovementType.IN).reduce((sum, m) => sum + m.quantity, 0);
-  const totalExits = movements.filter(m => m.type === MovementType.OUT).reduce((sum, m) => sum + m.quantity, 0);
-  const totalAdjustments = movements.filter(m => m.type === MovementType.ADJUST).length;
+  const totalEntries = movements.filter(m => m.type === "entrada").reduce((sum, m) => sum + m.quantity, 0);
+  const totalExits = movements.filter(m => m.type === "salida").reduce((sum, m) => sum + m.quantity, 0);
+  const totalAdjustments = movements.filter(m => m.type === "ajuste").length;
 
   if (isLoading) {
     return (
@@ -334,8 +333,8 @@ export default function ProductMovementsPage() {
                             </div>
                             <div className="flex items-center space-x-4">
                               <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getMovementColor(movement.type)}`}>
-                                {movement.type === MovementType.IN && '+'}
-                                {movement.type === MovementType.OUT && '-'}
+                                {movement.type === "entrada" && '+'}
+                                {movement.type === "salida" && '-'}
                                 {movement.quantity}
                               </span>
                               <div className="text-right">

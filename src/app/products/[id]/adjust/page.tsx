@@ -6,7 +6,7 @@ import { useStock } from '@/hooks/useStock';
 import { useProducts } from '@/hooks/useProducts';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Link from 'next/link';
-import { MovementType, Product } from '@/types';
+import { Product } from '@/types';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -22,7 +22,7 @@ export default function AdjustStockPage() {
   
   const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState<number>(0);
-  const [movementType, setMovementType] = useState<MovementType>(MovementType.IN);
+  const [movementType, setMovementType] = useState<string>("entrada");
   const [reason, setReason] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -68,7 +68,7 @@ export default function AdjustStockPage() {
     if (!product) return;
     
     setQuantity(Math.abs(amount));
-    setMovementType(amount > 0 ? MovementType.IN : MovementType.OUT);
+    setMovementType(amount > 0 ? "entrada" : "salida");
     
     try {
       const movement = await quickAdjust(
@@ -100,7 +100,7 @@ export default function AdjustStockPage() {
     setError(null);
     
     try {
-      const adjustmentAmount = movementType === MovementType.OUT ? -quantity : quantity;
+      const adjustmentAmount = movementType === "salida" ? -quantity : quantity;
       const movement = await quickAdjust(
         product.id,
         adjustmentAmount,
@@ -272,12 +272,12 @@ export default function AdjustStockPage() {
                   <select
                     id="movementType"
                     value={movementType}
-                    onChange={(e) => setMovementType(e.target.value as MovementType)}
+                    onChange={(e) => setMovementType(e.target.value)}
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   >
-                    <option value={MovementType.IN}>Entrada (+)</option>
-                    <option value={MovementType.OUT}>Salida (-)</option>
-                    <option value={MovementType.ADJUST}>Ajuste</option>
+                    <option value="entrada">Entrada (+)</option>
+                    <option value="salida">Salida (-)</option>
+                    <option value="ajuste">Ajuste</option>
                   </select>
                 </div>
 

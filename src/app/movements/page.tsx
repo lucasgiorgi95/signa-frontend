@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { StockMovement, MovementType, Product } from '@/types';
+import { StockMovement, Product } from '@/types';
 import { movementService } from '@/services/movementService';
 import { productService } from '@/services/productService';
 import { format } from 'date-fns';
@@ -26,7 +26,7 @@ export default function MovementsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [dateFrom, setDateFrom] = useState(format(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'));
   const [dateTo, setDateTo] = useState(format(new Date(), 'yyyy-MM-dd'));
-  const [movementType, setMovementType] = useState<MovementType | 'all'>('all');
+  const [movementType, setMovementType] = useState<string | 'all'>('all');
   const [selectedProduct, setSelectedProduct] = useState<number | 'all'>('all');
   
   // Paginación
@@ -218,7 +218,7 @@ export default function MovementsPage() {
               <div>
                 <select
                   value={movementType}
-                  onChange={(e) => setMovementType(e.target.value as MovementType | 'all')}
+                  onChange={(e) => setMovementType(e.target.value as string | 'all')}
                   className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="all">Todos los tipos</option>

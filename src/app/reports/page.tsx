@@ -5,7 +5,7 @@ import { useReports } from '@/hooks/useReports';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Product, StockMovement, MovementType } from '@/types';
+import { Product, StockMovement } from '@/types';
 import { productService } from '@/services/productService';
 import { movementService } from '@/services/movementService';
 import AssessmentIcon from '@mui/icons-material/Assessment';
@@ -46,7 +46,7 @@ export default function ReportsPage() {
   // Filtros
   const [dateFrom, setDateFrom] = useState(format(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'));
   const [dateTo, setDateTo] = useState(format(new Date(), 'yyyy-MM-dd'));
-  const [movementType, setMovementType] = useState<MovementType | 'all'>('all');
+  const [movementType, setMovementType] = useState<string | 'all'>('all');
   
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
@@ -257,7 +257,7 @@ export default function ReportsPage() {
                   
                   <select
                     value={movementType}
-                    onChange={(e) => setMovementType(e.target.value as MovementType | 'all')}
+                    onChange={(e) => setMovementType(e.target.value as string | 'all')}
                     className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                   >
                     <option value="all">Todos</option>

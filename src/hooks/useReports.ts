@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useProducts } from '@/hooks/useProducts';
 import { ReportService } from '@/services/reportService';
 import { movementService } from '@/services/movementService';
-import { MovementType } from '@/types';
+
 
 export function useReports() {
   const [loading, setLoading] = useState(false);

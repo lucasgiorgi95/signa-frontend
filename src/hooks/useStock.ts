@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StockAdjust, StockMovement, DashboardData, MovementType } from '@/types';
+import { StockAdjust, StockMovement, DashboardData } from '@/types';
 import { stockService } from '@/services/stockService';
 import { movementService } from '@/services/movementService';
 
@@ -26,7 +26,7 @@ export function useStock() {
     quantity: number, 
     reason?: string
   ): Promise<StockMovement | null> => {
-    const type = quantity > 0 ? MovementType.IN : MovementType.OUT;
+    const type = quantity > 0 ? "entrada" : "salida";
     const adjustmentData: StockAdjust = {
       product_id: productId,
       quantity: Math.abs(quantity),
