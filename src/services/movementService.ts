@@ -1,47 +1,132 @@
-import apiClient from './axios';
+import { supabase } from '@/lib/supabase';
 import { StockMovement, StockMovementCreate, MovementType } from '@/types';
-
-interface MovementResponse {
-  success: boolean;
-  data: StockMovement | StockMovement[];
-  message?: string;
-  pagination?: {
-    total: number;
-    page: number;
-    totalPages: number;
-  };
-}
 
 export const movementService = {
   async create(movementData: StockMovementCreate): Promise<StockMovement> {
-    // Mapear los datos al formato del backend Node.js
-    const payload = {
-      productId: movementData.product_id,
-      type: movementData.type === MovementType.IN ? 'entrada' : 'salida',
-      quantity: movementData.quantity,
-      reason: movementData.reason || 'Movimiento de stock'
-    };
-    
-    const response = await apiClient.post<MovementResponse>('/movements', payload);
-    
-    if (!response.data.success) {
-      throw new Error(response.data.message || 'Error creando movimiento');
+    // Obtener el usuario actual
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error('Usuario no autenticado');
     }
-    
-    return response.data.data as StockMovement;
+
+    // Crear el movimiento
+    const { data: movement, error: movementError } = await supabase
+      .from('stock_movements')
+      .insert({
+        product_id: movementData.product_id,
+        user_id: user.id,
+        type: movementData.type,
+        quantity: movementData.quantity,
+        reason: movementData.reason || 'Movimiento de stock',
+      })
+      .select()
+      .single();
+
+    if (movementError) {
+      throw new Error(movementError.message || 'Error creando movimiento');
+    }
+
+    // Actualizar el stock del producto
+    const { data: product, error: productError } = await supabase
+      .from('products')
+      .select('stock')
+      .eq('id', movementData.product_id)
+      .single();
+
+    if (productError) {
+      throw new Error('Error obteniendo producto para actualizar stock');
+    }
+
+    let newStock = product.stock;
+    if (movementData.type === MovementType.IN) {
+      newStock += movementData.quantity;
+    } else if (movementData.type === MovementType.OUT) {
+      newStock -= movementData.quantity;
+    } else if (movementData.type === MovementType.ADJUST) {
+      newStock = movementData.quantity; // Para ajustes, la cantidad es el nuevo stock
+    }
+
+    // Asegurar que el stock no sea negativo
+    if (newStock < 0) {
+      throw new Error('El stock no puede ser negativo');
+    }
+
+    const { error: updateError } = await supabase
+      .from('products')
+      .update({ 
+        stock: newStock,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', movementData.product_id);
+
+    if (updateError) {
+      throw new Error('Error actualizando stock del producto');
+    }
+
+    return movement;
   },
 
   async getByProduct(productId: string, params?: { page?: number; limit?: number }): Promise<StockMovement[]> {
-    const queryParams = new URLSearchParams();
-    if (params?.page) queryParams.append('page', params.page.toString());
-    if (params?.limit) queryParams.append('limit', params.limit.toString());
-    
-    const response = await apiClient.get<MovementResponse>(`/movements/${productId}?${queryParams.toString()}`);
-    
-    if (!response.data.success) {
-      throw new Error(response.data.message || 'Error obteniendo movimientos');
+    let query = supabase
+      .from('stock_movements')
+      .select('*')
+      .eq('product_id', productId)
+      .order('created_at', { ascending: false });
+
+    // Aplicar paginación si existe
+    if (params?.page && params?.limit) {
+      const from = (params.page - 1) * params.limit;
+      const to = from + params.limit - 1;
+      query = query.range(from, to);
     }
-    
-    return Array.isArray(response.data.data) ? response.data.data : [];
+
+    const { data, error } = await query;
+
+    if (error) {
+      throw new Error(error.message || 'Error obteniendo movimientos');
+    }
+
+    return data || [];
+  },
+
+  async getAll(params?: { 
+    page?: number; 
+    limit?: number; 
+    dateFrom?: string; 
+    dateTo?: string;
+    type?: MovementType;
+  }): Promise<StockMovement[]> {
+    let query = supabase
+      .from('stock_movements')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    // Filtros de fecha
+    if (params?.dateFrom) {
+      query = query.gte('created_at', params.dateFrom);
+    }
+    if (params?.dateTo) {
+      query = query.lte('created_at', params.dateTo);
+    }
+
+    // Filtro por tipo
+    if (params?.type) {
+      query = query.eq('type', params.type);
+    }
+
+    // Paginación
+    if (params?.page && params?.limit) {
+      const from = (params.page - 1) * params.limit;
+      const to = from + params.limit - 1;
+      query = query.range(from, to);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      throw new Error(error.message || 'Error obteniendo movimientos');
+    }
+
+    return data || [];
   }
 };

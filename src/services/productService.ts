@@ -1,95 +1,130 @@
-import apiClient from './axios';
+import { supabase } from '@/lib/supabase';
 import { Product, ProductCreate, ProductUpdate } from '@/types';
-
-interface ProductResponse {
-  success: boolean;
-  data: Product | Product[];
-  message?: string;
-  pagination?: {
-    total: number;
-    page: number;
-    totalPages: number;
-  };
-}
 
 export const productService = {
   async getAll(params?: { page?: number; limit?: number; search?: string }): Promise<Product[]> {
-    const queryParams = new URLSearchParams();
-    if (params?.page) queryParams.append('page', params.page.toString());
-    if (params?.limit) queryParams.append('limit', params.limit.toString());
-    if (params?.search) queryParams.append('search', params.search);
+    let query = supabase.from('products').select('*');
     
-    const response = await apiClient.get<ProductResponse>(`/products?${queryParams.toString()}`);
-    
-    if (!response.data.success) {
-      throw new Error(response.data.message || 'Error obteniendo productos');
+    // Aplicar filtro de búsqueda si existe
+    if (params?.search) {
+      query = query.or(`name.ilike.%${params.search}%,code.ilike.%${params.search}%`);
     }
     
-    return Array.isArray(response.data.data) ? response.data.data : [];
+    // Aplicar paginación si existe
+    if (params?.page && params?.limit) {
+      const from = (params.page - 1) * params.limit;
+      const to = from + params.limit - 1;
+      query = query.range(from, to);
+    }
+    
+    // Ordenar por fecha de creación
+    query = query.order('created_at', { ascending: false });
+    
+    const { data, error } = await query;
+    
+    if (error) {
+      throw new Error(error.message || 'Error obteniendo productos');
+    }
+    
+    return data || [];
   },
 
   async getByCode(code: string): Promise<Product | null> {
-    try {
-      const response = await apiClient.get<ProductResponse>(`/products/search?code=${encodeURIComponent(code)}`);
-      
-      if (!response.data.success) {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .eq('code', code)
+      .single();
+    
+    if (error) {
+      if (error.code === 'PGRST116') { // No rows returned
         return null;
       }
-      
-      return response.data.data as Product;
-    } catch (error: any) {
-      if (error.response?.status === 404) {
-        return null;
-      }
-      throw error;
+      throw new Error(error.message);
     }
+    
+    return data;
   },
 
   async getById(id: string): Promise<Product> {
-    const response = await apiClient.get<ProductResponse>(`/products/${id}`);
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .eq('id', id)
+      .single();
     
-    if (!response.data.success) {
-      throw new Error(response.data.message || 'Error obteniendo producto');
+    if (error) {
+      throw new Error(error.message || 'Error obteniendo producto');
     }
     
-    return response.data.data as Product;
+    return data;
   },
 
   async create(productData: ProductCreate): Promise<Product> {
-    const response = await apiClient.post<ProductResponse>('/products', productData);
+    const { data, error } = await supabase
+      .from('products')
+      .insert({
+        code: productData.code,
+        name: productData.name,
+        stock: productData.stock || 0,
+        min_stock: productData.min_stock || 0,
+      })
+      .select()
+      .single();
     
-    if (!response.data.success) {
-      throw new Error(response.data.message || 'Error creando producto');
+    if (error) {
+      throw new Error(error.message || 'Error creando producto');
     }
     
-    return response.data.data as Product;
+    return data;
   },
 
   async update(id: string, productData: ProductUpdate): Promise<Product> {
-    const response = await apiClient.put<ProductResponse>(`/products/${id}`, productData);
+    const updateData: any = {
+      updated_at: new Date().toISOString(),
+    };
     
-    if (!response.data.success) {
-      throw new Error(response.data.message || 'Error actualizando producto');
+    if (productData.code !== undefined) updateData.code = productData.code;
+    if (productData.name !== undefined) updateData.name = productData.name;
+    if (productData.stock !== undefined) updateData.stock = productData.stock;
+    if (productData.min_stock !== undefined) updateData.min_stock = productData.min_stock;
+    
+    const { data, error } = await supabase
+      .from('products')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) {
+      throw new Error(error.message || 'Error actualizando producto');
     }
     
-    return response.data.data as Product;
+    return data;
   },
 
   async delete(id: string): Promise<void> {
-    const response = await apiClient.delete<ProductResponse>(`/products/${id}`);
+    const { error } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', id);
     
-    if (!response.data.success) {
-      throw new Error(response.data.message || 'Error eliminando producto');
+    if (error) {
+      throw new Error(error.message || 'Error eliminando producto');
     }
   },
 
   async getLowStock(): Promise<Product[]> {
-    const response = await apiClient.get<ProductResponse>('/products/low-stock');
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .or('stock.eq.0,stock.lte.min_stock')
+      .order('stock', { ascending: true });
     
-    if (!response.data.success) {
-      throw new Error(response.data.message || 'Error obteniendo productos con stock bajo');
+    if (error) {
+      throw new Error(error.message || 'Error obteniendo productos con stock bajo');
     }
     
-    return Array.isArray(response.data.data) ? response.data.data : [];
+    return data || [];
   }
 };

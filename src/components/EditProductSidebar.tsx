@@ -79,17 +79,22 @@ export default function EditProductSidebar({
       setError(err instanceof Error ? err.message : 'Error al actualizar producto');
     }
   }; 
- const handleStockSave = async () => {
+  const handleStockSave = async () => {
     if (!product) return;
     
     setError(null);
     setSuccess(null);
     
+    if (!stockData.reason.trim()) {
+      setError('El motivo del ajuste es obligatorio');
+      return;
+    }
+    
     try {
       await adjustStock({
         product_id: product.id,
         quantity: stockData.quantity,
-        type: stockData.quantity > product.stock ? MovementType.IN : MovementType.OUT,
+        type: MovementType.ADJUST, // Siempre usar ADJUST para ajustes manuales
         reason: stockData.reason
       });
       setSuccess('Stock ajustado correctamente');
@@ -102,49 +107,47 @@ export default function EditProductSidebar({
     }
   };
 
-  if (!isOpen || !product) return null;
+  if (!product) return null;
 
   return (
     <>
       {/* Overlay with Blur */}
       <div 
-        className={`fixed inset-0 z-40 transition-all duration-500 ease-out ${
+        className={`fixed inset-0 z-40 transition-all duration-300 ease-out ${
           isOpen 
-            ? 'backdrop-blur-md bg-gray-900/30 opacity-100' 
+            ? 'backdrop-blur-sm bg-gray-900/50 opacity-100' 
             : 'backdrop-blur-none bg-gray-900/0 opacity-0 pointer-events-none'
         }`}
         onClick={onClose}
       />
       
       {/* Sidebar */}
-      <div className={`fixed right-0 top-0 h-full w-96 bg-white shadow-2xl z-50 transform transition-all duration-500 ease-out ${
-        isOpen ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
-      }`}
-      style={{
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)'
-      }}>
+      <div 
+        className={`fixed right-0 top-0 h-full w-96 bg-white shadow-2xl z-50 flex flex-col transform transition-all duration-300 ease-out ${
+          isOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+        style={{
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)'
+        }}
+      >
         {/* Header */}
-        <div className={`flex items-center justify-between p-6 border-b border-gray-200 transition-all duration-300 delay-100 ${
-          isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
-        }`}>
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
           <h2 className="text-lg font-semibold text-gray-900">
             Editar: {product.name}
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 hover:text-gray-600 transition-colors"
           >
             <CloseIcon className="h-6 w-6" />
           </button>
         </div>
 
         {/* Tabs */}
-        <div className={`flex border-b border-gray-200 transition-all duration-300 delay-200 ${
-          isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
-        }`}>
+        <div className="flex border-b border-gray-200 flex-shrink-0">
           <button
             onClick={() => setActiveTab('product')}
-            className={`flex-1 py-3 px-4 text-sm font-medium ${
+            className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
               activeTab === 'product'
                 ? 'text-blue-600 border-b-2 border-blue-600'
                 : 'text-gray-500 hover:text-gray-700'
@@ -155,7 +158,7 @@ export default function EditProductSidebar({
           </button>
           <button
             onClick={() => setActiveTab('stock')}
-            className={`flex-1 py-3 px-4 text-sm font-medium ${
+            className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
               activeTab === 'stock'
                 ? 'text-blue-600 border-b-2 border-blue-600'
                 : 'text-gray-500 hover:text-gray-700'
@@ -167,9 +170,7 @@ export default function EditProductSidebar({
         </div>
 
         {/* Content */}
-        <div className={`flex-1 overflow-y-auto p-6 transition-all duration-300 delay-300 ${
-          isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-        }`}>
+        <div className="flex-1 overflow-y-auto p-6 min-h-0">
           {/* Messages */}
           {error && (
             <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
@@ -277,15 +278,23 @@ export default function EditProductSidebar({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Motivo del Ajuste
+                  Motivo del Ajuste <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={stockData.reason}
                   onChange={(e) => setStockData(prev => ({ ...prev, reason: e.target.value }))}
                   placeholder="Ej: Inventario físico, Venta, Compra..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                    stockData.reason.trim() 
+                      ? 'border-gray-300 focus:ring-blue-500' 
+                      : 'border-red-300 focus:ring-red-500'
+                  }`}
+                  required
                 />
+                {!stockData.reason.trim() && (
+                  <p className="text-sm text-red-600 mt-1">Este campo es obligatorio</p>
+                )}
               </div>
 
               <div>
@@ -304,20 +313,19 @@ export default function EditProductSidebar({
         </div>
 
         {/* Footer */}
-        <div className={`border-t border-gray-200 p-6 transition-all duration-300 delay-400 ${
-          isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-        }`}>
+        <div className="border-t border-gray-200 p-6 flex-shrink-0 bg-white">
           <div className="flex space-x-3">
             <button
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              disabled={productLoading || stockLoading}
+              className="flex-1 px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancelar
             </button>
             <button
               onClick={activeTab === 'product' ? handleProductSave : handleStockSave}
               disabled={productLoading || stockLoading}
-              className="flex-1 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+              className="flex-1 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {(productLoading || stockLoading) ? (
                 <div className="flex items-center justify-center">

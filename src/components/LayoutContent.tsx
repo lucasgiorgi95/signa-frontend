@@ -1,6 +1,7 @@
 'use client';
 
 import { useAuth } from '@/context/AuthContext';
+import { usePathname } from 'next/navigation';
 import Sidebar from './sidebar';
 
 interface LayoutContentProps {
@@ -8,7 +9,15 @@ interface LayoutContentProps {
 }
 
 export default function LayoutContent({ children }: LayoutContentProps) {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
+  const pathname = usePathname();
+
+  // Rutas públicas que no necesitan autenticación
+  const publicRoutes = ['/login', '/register', '/'];
+  const isPublicRoute = publicRoutes.includes(pathname);
+
+  // Debug logs
+  console.log('LayoutContent - pathname:', pathname, 'isAuthenticated:', isAuthenticated, 'loading:', loading, 'user:', user?.email);
 
   if (loading) {
     return (
@@ -21,8 +30,20 @@ export default function LayoutContent({ children }: LayoutContentProps) {
     );
   }
 
+  // Si es una ruta pública, mostrar layout simple sin sidebar
+  if (isPublicRoute) {
+    return (
+      <div className="min-h-screen bg-white">
+        <main className="h-full">
+          {children}
+        </main>
+      </div>
+    );
+  }
+
+  // Si no está autenticado y no es ruta pública, mostrar layout simple
+  // (ProtectedRoute se encargará de redirigir)
   if (!isAuthenticated) {
-    // Layout simple para páginas no autenticadas (login, register)
     return (
       <div className="min-h-screen bg-white">
         <main className="h-full">

@@ -8,7 +8,7 @@ import { LoginCredentials } from '@/types';
 
 export default function LoginPage() {
   const [credentials, setCredentials] = useState<LoginCredentials>({
-    username: '',
+    email: '',
     password: ''
   });
   const [error, setError] = useState('');
@@ -58,18 +58,18 @@ export default function LoginPage() {
           
           <div className="space-y-4">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                Usuario
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email
               </label>
               <input
-                id="username"
-                name="username"
-                type="text"
+                id="email"
+                name="email"
+                type="email"
                 required
-                value={credentials.username}
+                value={credentials.email}
                 onChange={handleChange}
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Nombre de usuario"
+                placeholder="tu@email.com"
               />
             </div>
             
@@ -125,7 +125,7 @@ export default function LoginPage() {
                 type="button"
                 onClick={() => {
                   setCredentials({
-                    username: 'admin@test.com',
+                    email: 'admin@test.com',
                     password: 'admin123'
                   });
                 }}

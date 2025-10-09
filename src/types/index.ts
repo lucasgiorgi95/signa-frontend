@@ -2,15 +2,16 @@
 
 // Tipos para autenticación
 export interface User {
-  id: string;
+  id: number;
   email: string;
   username: string;
-  is_active: boolean;
+  is_active?: boolean;
   created_at: string;
+  updated_at: string;
 }
 
 export interface LoginCredentials {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -58,34 +59,31 @@ export interface SupplierUpdate {
 
 // Tipos para productos
 export interface Product {
-  id: string;
+  id: number;
   code: string;
   name: string;
   description?: string;
   stock: number;
   min_stock: number;
   price?: number;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
+  image_url?: string;
+  is_active?: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ProductCreate {
   code: string;
   name: string;
-  description?: string;
   stock?: number;
   min_stock?: number;
-  price?: number;
 }
 
 export interface ProductUpdate {
   code?: string;
   name?: string;
-  description?: string;
   stock?: number;
   min_stock?: number;
-  price?: number;
 }
 
 // Tipos para movimientos de stock
@@ -96,12 +94,12 @@ export enum MovementType {
 }
 
 export interface StockMovement {
-  id: string;
-  product_id: string;
+  id: number;
+  product_id: number;
   type: MovementType;
   quantity: number;
   reason?: string;
-  user_id: string;
+  user_id: number;
   created_at: string;
 }
 
