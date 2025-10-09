@@ -171,68 +171,84 @@ export default function ProfilePage() {
 
               {/* Tab: Información Personal */}
               {activeTab === 'profile' && (
-                <form onSubmit={handleProfileUpdate} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Nombre de Usuario
-                      </label>
-                      <input
-                        type="text"
-                        value={profileData.username}
-                        onChange={(e) => setProfileData(prev => ({ ...prev, username: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        value={profileData.email}
-                        disabled
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">
-                        El email no se puede cambiar por seguridad
-                      </p>
+                <div className="space-y-6">
+                  {/* Banner de Próximamente */}
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0">
+                        <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+                          <span className="text-2xl">🚧</span>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <h3 className="text-lg font-semibold text-blue-900">
+                          Edición de Perfil - Próximamente
+                        </h3>
+                        <p className="text-blue-700 mt-1">
+                          Estamos trabajando en funcionalidades avanzadas de perfil que incluirán:
+                        </p>
+                        <ul className="text-sm text-blue-600 mt-2 space-y-1">
+                          <li>• Edición completa de información personal</li>
+                          <li>• Foto de perfil personalizada</li>
+                          <li>• Configuración de preferencias</li>
+                          <li>• Historial de actividad detallado</li>
+                          <li>• Configuración de notificaciones por usuario</li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
 
+                  {/* Información actual (solo lectura) */}
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="text-sm font-medium text-gray-900 mb-2">Información de la Cuenta</h3>
+                    <h3 className="text-sm font-medium text-gray-900 mb-4">Información Actual de la Cuenta</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      <div>
+                      <div className="flex justify-between">
                         <span className="text-gray-500">ID de Usuario:</span>
-                        <span className="ml-2 font-mono text-gray-900">{user?.id.substring(0, 8)}...</span>
+                        <span className="font-mono text-gray-900">#{user?.id || 'N/A'}</span>
                       </div>
-                      <div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Email:</span>
+                        <span className="text-gray-900">{user?.email || 'N/A'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Usuario:</span>
+                        <span className="text-gray-900">{user?.username || 'N/A'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Estado:</span>
+                        <span className="text-green-600 font-medium">Activo</span>
+                      </div>
+                      <div className="flex justify-between">
                         <span className="text-gray-500">Cuenta creada:</span>
-                        <span className="ml-2 text-gray-900">
-                          {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('es-ES') : 'N/A'}
+                        <span className="text-gray-900">
+                          {user?.created_at ? new Date(user.created_at).toLocaleDateString('es-ES') : 'N/A'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Última actualización:</span>
+                        <span className="text-gray-900">
+                          {user?.updated_at ? new Date(user.updated_at).toLocaleDateString('es-ES') : 'N/A'}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex justify-end">
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
-                    >
-                      {loading ? (
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      ) : (
-                        <SaveIcon className="h-4 w-4 mr-2" />
-                      )}
-                      {loading ? 'Guardando...' : 'Guardar Cambios'}
-                    </button>
+                  {/* Acciones disponibles */}
+                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <h3 className="text-sm font-medium text-gray-900 mb-3">Acciones Disponibles</h3>
+                    <div className="space-y-2">
+                      <p className="text-sm text-gray-600">
+                        ✅ Cambiar contraseña (disponible en la pestaña "Seguridad")
+                      </p>
+                      <p className="text-sm text-gray-400">
+                        🚧 Editar información personal (próximamente)
+                      </p>
+                      <p className="text-sm text-gray-400">
+                        🚧 Subir foto de perfil (próximamente)
+                      </p>
+                    </div>
                   </div>
-                </form>
+                </div>
               )}
 
               {/* Tab: Seguridad */}

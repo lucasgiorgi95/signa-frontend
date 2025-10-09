@@ -1,21 +1,26 @@
-import jsPDF from "jspdf";
-import "jspdf-autotable";
+import { jsPDF } from "jspdf";
 import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Product, StockMovement, MovementType } from "@/types";
-
-// Extender el tipo jsPDF para incluir autoTable
-declare module "jspdf" {
-  interface jsPDF {
-    autoTable: (options: any) => jsPDF;
-  }
-}
+import { Product, StockMovement } from "@/types";
 
 export class ReportService {
+  // Cargar jspdf-autotable dinámicamente
+  private static async loadAutoTable() {
+    if (typeof window !== "undefined") {
+      const autoTable = await import("jspdf-autotable");
+      return autoTable.default;
+    }
+    return null;
+  }
+
   // Generar reporte de productos con stock bajo en PDF
-  static generateLowStockPDF(products: Product[], username: string) {
+  static async generateLowStockPDF(products: Product[], username: string) {
+    const autoTable = await this.loadAutoTable();
+    if (!autoTable) {
+      throw new Error("No se pudo cargar la librería de tablas PDF");
+    }
+
     const doc = new jsPDF();
 
     // Header
@@ -40,7 +45,7 @@ export class ReportService {
       product.stock === 0 ? "Sin stock" : "Stock bajo",
     ]);
 
-    doc.autoTable({
+    autoTable(doc, {
       head: [["Código", "Producto", "Stock Actual", "Stock Mínimo", "Estado"]],
       body: tableData,
       startY: 60,
@@ -49,36 +54,14 @@ export class ReportService {
         cellPadding: 3,
       },
       headStyles: {
-        fillColor: [59, 130, 246], // blue-500
+        fillColor: [59, 130, 246],
         textColor: 255,
         fontStyle: "bold",
       },
       alternateRowStyles: {
-        fillColor: [249, 250, 251], // gray-50
-      },
-      didDrawCell: (data: any) => {
-        // Colorear filas según el estado
-        if (data.column.index === 4 && data.cell.raw === "Sin stock") {
-          data.cell.styles.textColor = [220, 38, 38]; // red-600
-          data.cell.styles.fontStyle = "bold";
-        } else if (data.column.index === 4 && data.cell.raw === "Stock bajo") {
-          data.cell.styles.textColor = [217, 119, 6]; // yellow-600
-          data.cell.styles.fontStyle = "bold";
-        }
+        fillColor: [249, 250, 251],
       },
     });
-
-    // Footer
-    const pageCount = doc.getNumberOfPages();
-    for (let i = 1; i <= pageCount; i++) {
-      doc.setPage(i);
-      doc.setFontSize(8);
-      doc.text(
-        `Página ${i} de ${pageCount}`,
-        doc.internal.pageSize.width - 30,
-        doc.internal.pageSize.height - 10
-      );
-    }
 
     // Descargar
     doc.save(`stock-bajo-${format(new Date(), "yyyy-MM-dd")}.pdf`);
@@ -92,7 +75,7 @@ export class ReportService {
       "Stock Actual": product.stock,
       "Stock Mínimo": product.min_stock,
       Estado: product.stock === 0 ? "Sin stock" : "Stock bajo",
-      "Fecha Creación": format(new Date(product.createdAt), "dd/MM/yyyy"),
+      "Fecha Creación": format(new Date(product.created_at), "dd/MM/yyyy"),
     }));
 
     // Agregar información del reporte
@@ -159,7 +142,12 @@ export class ReportService {
   }
 
   // Generar reporte de inventario completo en PDF
-  static generateInventoryPDF(products: Product[], username: string) {
+  static async generateInventoryPDF(products: Product[], username: string) {
+    const autoTable = await this.loadAutoTable();
+    if (!autoTable) {
+      throw new Error("No se pudo cargar la librería de tablas PDF");
+    }
+
     const doc = new jsPDF();
 
     // Header
@@ -192,7 +180,7 @@ export class ReportService {
         : "En stock",
     ]);
 
-    doc.autoTable({
+    autoTable(doc, {
       head: [["Código", "Producto", "Stock Actual", "Stock Mínimo", "Estado"]],
       body: tableData,
       startY: 70,
@@ -201,12 +189,12 @@ export class ReportService {
         cellPadding: 2,
       },
       headStyles: {
-        fillColor: [34, 197, 94], // green-500
+        fillColor: [34, 197, 94],
         textColor: 255,
         fontStyle: "bold",
       },
       alternateRowStyles: {
-        fillColor: [249, 250, 251], // gray-50
+        fillColor: [249, 250, 251],
       },
     });
 
@@ -226,7 +214,7 @@ export class ReportService {
           : product.stock <= product.min_stock
           ? "Stock bajo"
           : "En stock",
-      "Fecha Creación": format(new Date(product.createdAt), "dd/MM/yyyy"),
+      "Fecha Creación": format(new Date(product.created_at), "dd/MM/yyyy"),
     }));
 
     // Calcular estadísticas
@@ -325,12 +313,17 @@ export class ReportService {
   }
 
   // Generar reporte de movimientos por período en PDF
-  static generateMovementsPDF(
+  static async generateMovementsPDF(
     movements: StockMovement[],
     dateFrom: string,
     dateTo: string,
     username: string
   ) {
+    const autoTable = await this.loadAutoTable();
+    if (!autoTable) {
+      throw new Error("No se pudo cargar la librería de tablas PDF");
+    }
+
     const doc = new jsPDF();
 
     // Header
@@ -348,11 +341,9 @@ export class ReportService {
     doc.text(`Total movimientos: ${movements.length}`, 20, 60);
 
     // Estadísticas
-    const entradas = movements.filter((m) => m.type === MovementType.IN).length;
-    const salidas = movements.filter((m) => m.type === MovementType.OUT).length;
-    const ajustes = movements.filter(
-      (m) => m.type === MovementType.ADJUST
-    ).length;
+    const entradas = movements.filter((m) => m.type === "entrada").length;
+    const salidas = movements.filter((m) => m.type === "salida").length;
+    const ajustes = movements.filter((m) => m.type === "ajuste").length;
 
     doc.text(
       `Entradas: ${entradas} | Salidas: ${salidas} | Ajustes: ${ajustes}`,
@@ -370,10 +361,10 @@ export class ReportService {
         : "Ajuste",
       movement.quantity.toString(),
       movement.reason || "Sin razón",
-      movement.product_id?.substring(0, 8) + "..." || "N/A", // ID corto
+      movement.product_id?.toString() || "N/A",
     ]);
 
-    doc.autoTable({
+    autoTable(doc, {
       head: [["Fecha", "Tipo", "Cantidad", "Razón", "Producto ID"]],
       body: tableData,
       startY: 80,
@@ -382,7 +373,7 @@ export class ReportService {
         cellPadding: 2,
       },
       headStyles: {
-        fillColor: [168, 85, 247], // purple-500
+        fillColor: [168, 85, 247],
         textColor: 255,
         fontStyle: "bold",
       },
@@ -411,16 +402,14 @@ export class ReportService {
           : "Ajuste",
       Cantidad: movement.quantity,
       Razón: movement.reason || "Sin razón",
-      "Producto ID": movement.product_id,
-      "Usuario ID": movement.user_id,
+      "Producto ID": movement.product_id?.toString() || "N/A",
+      "Usuario ID": movement.user_id?.toString() || "N/A",
     }));
 
     // Estadísticas
-    const entradas = movements.filter((m) => m.type === MovementType.IN).length;
-    const salidas = movements.filter((m) => m.type === MovementType.OUT).length;
-    const ajustes = movements.filter(
-      (m) => m.type === MovementType.ADJUST
-    ).length;
+    const entradas = movements.filter((m) => m.type === "entrada").length;
+    const salidas = movements.filter((m) => m.type === "salida").length;
+    const ajustes = movements.filter((m) => m.type === "ajuste").length;
 
     const reportInfo = [
       {

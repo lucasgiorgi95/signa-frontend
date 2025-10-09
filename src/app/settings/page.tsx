@@ -169,50 +169,58 @@ export default function SettingsPage() {
               <h2 className="text-lg font-semibold text-gray-900">Configuración General</h2>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Banner de Próximamente */}
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-4 mb-6">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <span className="text-2xl">⚙️</span>
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-semibold text-amber-900">
+                    Configuración Avanzada - En Desarrollo
+                  </h3>
+                  <p className="text-amber-700 text-sm mt-1">
+                    Próximamente: Personalización completa de moneda, idioma, formatos y más opciones avanzadas.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Configuración básica disponible */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-60">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Moneda
+                  Moneda (Próximamente)
                 </label>
                 <select
-                  value={settings.currency}
-                  onChange={(e) => updateSetting('currency', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed"
                 >
-                  <option value="USD">USD - Dólar Americano</option>
-                  <option value="EUR">EUR - Euro</option>
-                  <option value="ARS">ARS - Peso Argentino</option>
-                  <option value="MXN">MXN - Peso Mexicano</option>
-                  <option value="COP">COP - Peso Colombiano</option>
+                  <option>USD - Dólar Americano</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Idioma
+                  Idioma (Próximamente)
                 </label>
                 <select
-                  value={settings.language}
-                  onChange={(e) => updateSetting('language', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed"
                 >
-                  <option value="es">Español</option>
-                  <option value="en">English</option>
+                  <option>Español</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Formato de Fecha
+                  Formato de Fecha (Próximamente)
                 </label>
                 <select
-                  value={settings.dateFormat}
-                  onChange={(e) => updateSetting('dateFormat', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed"
                 >
-                  <option value="dd/MM/yyyy">DD/MM/YYYY</option>
-                  <option value="MM/dd/yyyy">MM/DD/YYYY</option>
-                  <option value="yyyy-MM-dd">YYYY-MM-DD</option>
+                  <option>DD/MM/YYYY</option>
                 </select>
               </div>
 
@@ -230,6 +238,7 @@ export default function SettingsPage() {
                   <option value={20}>20</option>
                   <option value={50}>50</option>
                 </select>
+                <p className="text-xs text-green-600 mt-1">✅ Funcional</p>
               </div>
             </div>
           </div>
@@ -367,6 +376,21 @@ export default function SettingsPage() {
               <h2 className="text-lg font-semibold text-gray-900">Apariencia</h2>
             </div>
             
+            {/* Banner de Próximamente */}
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-4 mb-4">
+              <div className="flex items-center">
+                <span className="text-2xl mr-3">🎨</span>
+                <div>
+                  <h3 className="text-sm font-semibold text-purple-900">
+                    Temas Personalizados - Próximamente
+                  </h3>
+                  <p className="text-purple-700 text-sm mt-1">
+                    Modo oscuro, temas personalizados y opciones de accesibilidad en desarrollo.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Tema
@@ -377,33 +401,31 @@ export default function SettingsPage() {
                     type="radio"
                     name="theme"
                     value="light"
-                    checked={settings.theme === 'light'}
-                    onChange={(e) => updateSetting('theme', e.target.value)}
+                    checked={true}
+                    readOnly
                     className="border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  <span className="ml-2 text-sm text-gray-700">Claro</span>
+                  <span className="ml-2 text-sm text-gray-700">Claro ✅</span>
                 </label>
-                <label className="flex items-center">
+                <label className="flex items-center opacity-50">
                   <input
                     type="radio"
                     name="theme"
                     value="dark"
-                    checked={settings.theme === 'dark'}
-                    onChange={(e) => updateSetting('theme', e.target.value)}
-                    className="border-gray-300 text-blue-600 focus:ring-blue-500"
+                    disabled
+                    className="border-gray-300 text-gray-400"
                   />
-                  <span className="ml-2 text-sm text-gray-700">Oscuro (Próximamente)</span>
+                  <span className="ml-2 text-sm text-gray-400">Oscuro 🚧</span>
                 </label>
-                <label className="flex items-center">
+                <label className="flex items-center opacity-50">
                   <input
                     type="radio"
                     name="theme"
                     value="auto"
-                    checked={settings.theme === 'auto'}
-                    onChange={(e) => updateSetting('theme', e.target.value)}
-                    className="border-gray-300 text-blue-600 focus:ring-blue-500"
+                    disabled
+                    className="border-gray-300 text-gray-400"
                   />
-                  <span className="ml-2 text-sm text-gray-700">Automático (Próximamente)</span>
+                  <span className="ml-2 text-sm text-gray-400">Automático 🚧</span>
                 </label>
               </div>
             </div>
@@ -413,10 +435,10 @@ export default function SettingsPage() {
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Información de la Aplicación</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-4">
               <div>
                 <span className="text-gray-500">Versión:</span>
-                <span className="ml-2 text-gray-900">1.0.0 Beta</span>
+                <span className="ml-2 text-gray-900 font-medium">1.0.0 Beta</span>
               </div>
               <div>
                 <span className="text-gray-500">Última actualización:</span>
@@ -429,6 +451,18 @@ export default function SettingsPage() {
               <div>
                 <span className="text-gray-500">Configuración guardada:</span>
                 <span className="ml-2 text-gray-900">Localmente</span>
+              </div>
+            </div>
+
+            {/* Roadmap rápido */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-sm font-medium text-gray-900 mb-2">🚀 Próximas Funcionalidades</h3>
+              <div className="text-xs text-gray-600 space-y-1">
+                <div>• Backup/Restore de datos completos</div>
+                <div>• PWA con escáner de cámara</div>
+                <div>• Múltiples ubicaciones y almacenes</div>
+                <div>• Gestión avanzada de usuarios y permisos</div>
+                <div>• Integración con sistemas externos</div>
               </div>
             </div>
           </div>

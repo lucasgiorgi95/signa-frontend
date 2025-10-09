@@ -16,11 +16,11 @@ export const authService = {
       throw new Error('No se pudo obtener el usuario');
     }
 
-    // Obtener datos adicionales del usuario desde la tabla users
+    // Obtener datos adicionales del usuario desde la tabla users por email
     const { data: userData, error: userError } = await supabase
       .from('users')
       .select('*')
-      .eq('id', data.user.id)
+      .eq('email', data.user.email)
       .single();
 
     if (userError) {
@@ -28,11 +28,12 @@ export const authService = {
     }
 
     const user: User = {
-      id: data.user.id,
+      id: userData?.id || 0, // Usar el ID de la tabla users
       email: data.user.email!,
       username: userData?.username || data.user.email!.split('@')[0],
-      createdAt: data.user.created_at,
-      updatedAt: userData?.updated_at || data.user.created_at,
+      is_active: userData?.is_active ?? true,
+      created_at: userData?.created_at || data.user.created_at,
+      updated_at: userData?.updated_at || data.user.created_at,
     };
 
     const token = data.session?.access_token || '';
@@ -71,25 +72,35 @@ export const authService = {
     }
 
     // Insertar datos adicionales en la tabla users
+    // Nota: Tu esquema usa INTEGER IDs, no UUIDs, así que omitimos el ID
     const { error: insertError } = await supabase
       .from('users')
       .insert({
-        id: data.user.id,
         email: userData.email,
         username: userData.username,
+        password: 'managed_by_supabase_auth', // Placeholder ya que Supabase Auth maneja las contraseñas
       });
 
     if (insertError) {
       console.error('Error insertando datos del usuario:', insertError);
+      console.error('Detalles del error:', JSON.stringify(insertError, null, 2));
       // No lanzamos error aquí porque el usuario ya fue creado en Auth
     }
 
+    // Obtener el usuario recién creado de la tabla users
+    const { data: newUserData } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', userData.email)
+      .single();
+
     const user: User = {
-      id: data.user.id,
+      id: newUserData?.id || 0,
       email: data.user.email!,
       username: userData.username,
-      createdAt: data.user.created_at!,
-      updatedAt: new Date().toISOString(),
+      is_active: true,
+      created_at: data.user.created_at!,
+      updated_at: new Date().toISOString(),
     };
 
     console.log('✅ Usuario registrado:', user);
@@ -107,24 +118,24 @@ export const authService = {
 
     const user = session.user;
 
-    // Intentar obtener datos adicionales del usuario
+    // Intentar obtener datos adicionales del usuario por email (ya que tu tabla usa INTEGER IDs)
     const { data: userData, error: userError } = await supabase
       .from('users')
       .select('*')
-      .eq('id', user.id)
+      .eq('email', user.email)
       .single();
 
     if (userError && userError.code !== 'PGRST116') {
-      // PGRST116 = No rows returned, es normal si el usuario no está en la tabla users
       console.warn('Error obteniendo datos adicionales del usuario:', userError);
     }
 
     return {
-      id: user.id,
+      id: userData?.id || 0, // Usar el ID de la tabla users o 0 como fallback
       email: user.email!,
       username: userData?.username || user.email!.split('@')[0],
-      createdAt: user.created_at!,
-      updatedAt: userData?.updated_at || user.created_at!,
+      is_active: userData?.is_active ?? true,
+      created_at: userData?.created_at || user.created_at!,
+      updated_at: userData?.updated_at || user.created_at!,
     };
   },
 

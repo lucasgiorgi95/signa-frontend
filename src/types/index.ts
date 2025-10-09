@@ -96,7 +96,7 @@ export enum MovementType {
 export interface StockMovement {
   id: number;
   product_id: number;
-  type: MovementType;
+  type: string; // "entrada" | "salida" | "ajuste"
   quantity: number;
   reason?: string;
   user_id: number;
@@ -104,14 +104,14 @@ export interface StockMovement {
 }
 
 export interface StockMovementCreate {
-  product_id: string;
+  product_id: number;
   type: MovementType;
   quantity: number;
   reason?: string;
 }
 
 export interface StockAdjust {
-  product_id: string;
+  product_id: number;
   quantity: number;
   type: MovementType;
   reason?: string;
