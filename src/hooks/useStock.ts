@@ -22,7 +22,7 @@ export function useStock() {
   };
 
   const quickAdjust = async (
-    productId: string, 
+    productId: number, 
     quantity: number, 
     reason?: string
   ): Promise<StockMovement | null> => {
@@ -51,7 +51,7 @@ export function useStock() {
     }
   };
 
-  const getMovementHistory = async (productId: string): Promise<StockMovement[]> => {
+  const getMovementHistory = async (productId: number): Promise<StockMovement[]> => {
     setLoading(true);
     setError(null);
     try {

@@ -52,7 +52,7 @@ export function useProducts() {
     }
   };
 
-  const updateProduct = async (id: string, productData: ProductUpdate): Promise<Product | null> => {
+  const updateProduct = async (id: number, productData: ProductUpdate): Promise<Product | null> => {
     setLoading(true);
     setError(null);
     try {
@@ -67,7 +67,7 @@ export function useProducts() {
     }
   };
 
-  const deleteProduct = async (id: string): Promise<boolean> => {
+  const deleteProduct = async (id: number): Promise<boolean> => {
     setLoading(true);
     setError(null);
     try {

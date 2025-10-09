@@ -1,51 +1,53 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { useAuth } from '@/hooks/useAuth';
-import { RegisterData } from '@/types';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useAuth } from "@/hooks/useAuth";
+import { RegisterData } from "@/types";
 
 export default function RegisterPage() {
   const [userData, setUserData] = useState<RegisterData>({
-    email: '',
-    username: '',
-    password: ''
+    email: "",
+    username: "",
+    password: "",
   });
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
   const { register, loading } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (userData.password !== confirmPassword) {
-      setError('Las contraseñas no coinciden');
+      setError("Las contraseñas no coinciden");
       return;
     }
 
     if (userData.password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres');
+      setError("La contraseña debe tener al menos 6 caracteres");
       return;
     }
 
     try {
-      console.log('🚀 Intentando registrar usuario:', userData);
+      console.log("🚀 Intentando registrar usuario:", userData);
       await register(userData);
-      console.log('✅ Registro exitoso, redirigiendo...');
-      router.push('/dashboard');
+      console.log("✅ Registro exitoso, redirigiendo...");
+      router.push("/dashboard");
     } catch (err) {
-      console.error('❌ Error en registro:', err);
-      setError(err instanceof Error ? err.message : 'Error al registrar usuario');
+      console.error("❌ Error en registro:", err);
+      setError(
+        err instanceof Error ? err.message : "Error al registrar usuario"
+      );
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserData(prev => ({
+    setUserData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
@@ -57,23 +59,29 @@ export default function RegisterPage() {
             Crear Cuenta
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            O{' '}
-            <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+            O{" "}
+            <Link
+              href="/login"
+              className="font-medium text-blue-600 hover:text-blue-500"
+            >
               iniciar sesión con tu cuenta
             </Link>
           </p>
         </div>
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
               {error}
             </div>
           )}
-          
+
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Email
               </label>
               <input
@@ -87,9 +95,12 @@ export default function RegisterPage() {
                 placeholder="tu@email.com"
               />
             </div>
-            
+
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Usuario
               </label>
               <input
@@ -103,9 +114,12 @@ export default function RegisterPage() {
                 placeholder="Nombre de usuario"
               />
             </div>
-            
+
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Contraseña
               </label>
               <input
@@ -119,9 +133,12 @@ export default function RegisterPage() {
                 placeholder="Contraseña (mín. 6 caracteres)"
               />
             </div>
-            
+
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Confirmar Contraseña
               </label>
               <input
@@ -143,7 +160,7 @@ export default function RegisterPage() {
               disabled={loading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
+              {loading ? "Creando cuenta..." : "Crear Cuenta"}
             </button>
           </div>
 
@@ -159,11 +176,11 @@ export default function RegisterPage() {
               <div className="bg-white rounded-md p-3 border border-blue-200">
                 <div className="text-sm font-mono">
                   <div className="mb-1">
-                    <span className="text-gray-600">Usuario:</span>{' '}
+                    <span className="text-gray-600">Usuario:</span>{" "}
                     <span className="font-semibold text-blue-700">demo</span>
                   </div>
                   <div>
-                    <span className="text-gray-600">Contraseña:</span>{' '}
+                    <span className="text-gray-600">Contraseña:</span>{" "}
                     <span className="font-semibold text-blue-700">123456</span>
                   </div>
                 </div>

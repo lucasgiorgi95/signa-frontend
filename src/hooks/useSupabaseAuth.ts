@@ -21,8 +21,8 @@ export function useSupabaseAuth() {
             id: session.user.id,
             email: session.user.email!,
             username: session.user.email!.split('@')[0],
-            createdAt: session.user.created_at!,
-            updatedAt: session.user.updated_at || session.user.created_at!,
+            created_at: session.user.created_at!,
+            updated_at: session.user.updated_at || session.user.created_at!,
           };
           
           setUser(userData);
@@ -50,8 +50,8 @@ export function useSupabaseAuth() {
             id: session.user.id,
             email: session.user.email!,
             username: session.user.email!.split('@')[0],
-            createdAt: session.user.created_at!,
-            updatedAt: session.user.updated_at || session.user.created_at!,
+            created_at: session.user.created_at!,
+            updated_at: session.user.updated_at || session.user.created_at!,
           };
           
           setUser(userData);

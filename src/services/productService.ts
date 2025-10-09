@@ -46,7 +46,7 @@ export const productService = {
     return data;
   },
 
-  async getById(id: string): Promise<Product> {
+  async getById(id: number): Promise<Product> {
     const { data, error } = await supabase
       .from('products')
       .select('*')
@@ -61,31 +61,50 @@ export const productService = {
   },
 
   async create(productData: ProductCreate): Promise<Product> {
+    console.log('🔄 Creando producto:', productData);
+    
+    // Obtener el usuario actual
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error('Usuario no autenticado');
+    }
+    
     const { data, error } = await supabase
       .from('products')
       .insert({
         code: productData.code,
         name: productData.name,
+        description: productData.description,
         stock: productData.stock || 0,
         min_stock: productData.min_stock || 0,
+        user_id: user.id, // Agregar el ID del usuario
       })
       .select()
       .single();
     
     if (error) {
+      console.error('❌ Error creando producto:', error);
+      
+      // Manejar errores específicos
+      if (error.code === '23505') {
+        throw new Error('Ya existe un producto con ese código de barras');
+      }
+      
       throw new Error(error.message || 'Error creando producto');
     }
     
+    console.log('✅ Producto creado:', data);
     return data;
   },
 
-  async update(id: string, productData: ProductUpdate): Promise<Product> {
+  async update(id: number, productData: ProductUpdate): Promise<Product> {
     const updateData: any = {
       updated_at: new Date().toISOString(),
     };
     
     if (productData.code !== undefined) updateData.code = productData.code;
     if (productData.name !== undefined) updateData.name = productData.name;
+    if (productData.description !== undefined) updateData.description = productData.description;
     if (productData.stock !== undefined) updateData.stock = productData.stock;
     if (productData.min_stock !== undefined) updateData.min_stock = productData.min_stock;
     
@@ -103,7 +122,7 @@ export const productService = {
     return data;
   },
 
-  async delete(id: string): Promise<void> {
+  async delete(id: number): Promise<void> {
     const { error } = await supabase
       .from('products')
       .delete()

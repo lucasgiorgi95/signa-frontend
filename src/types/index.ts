@@ -2,7 +2,7 @@
 
 // Tipos para autenticación
 export interface User {
-  id: number;
+  id: string; // UUID de Supabase
   email: string;
   username: string;
   is_active?: boolean;
@@ -36,8 +36,8 @@ export interface Supplier {
   address?: string;
   isActive?: boolean;
   userId: string;
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface SupplierCreate {
@@ -68,6 +68,7 @@ export interface Product {
   price?: number;
   image_url?: string;
   is_active?: boolean;
+  user_id?: string; // UUID del usuario que creó el producto
   created_at: string;
   updated_at: string;
 }
@@ -75,6 +76,7 @@ export interface Product {
 export interface ProductCreate {
   code: string;
   name: string;
+  description?: string;
   stock?: number;
   min_stock?: number;
 }
@@ -82,6 +84,7 @@ export interface ProductCreate {
 export interface ProductUpdate {
   code?: string;
   name?: string;
+  description?: string;
   stock?: number;
   min_stock?: number;
 }
@@ -94,7 +97,7 @@ export interface StockMovement {
   type: string; // "entrada" | "salida" | "ajuste"
   quantity: number;
   reason?: string;
-  user_id: number;
+  user_id: string; // UUID de Supabase
   created_at: string;
 }
 

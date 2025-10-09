@@ -43,14 +43,14 @@ export default function AdjustStockPage() {
           // Cargar por ID (implementar productService.getById)
           // Por ahora usamos datos mock
           const mockProduct: Product = {
-            id: params.id as string,
+            id: parseInt(params.id as string) || 1,
             code: '123456789',
             name: 'Producto de Ejemplo',
             stock: 50,
             min_stock: 10,
-            userId: 'user-1',
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            user_id: 'user-uuid-1',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           };
           setProduct(mockProduct);
         }

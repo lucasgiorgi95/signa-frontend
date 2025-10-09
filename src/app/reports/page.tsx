@@ -117,7 +117,7 @@ export default function ReportsPage() {
     if (selectedReport === 'movements') {
       return reportData.movements?.filter(movement =>
         movement.reason?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        movement.product_id.toLowerCase().includes(searchTerm.toLowerCase())
+        movement.product_id.toString().toLowerCase().includes(searchTerm.toLowerCase())
       ) || [];
     } else {
       return reportData.products?.filter(product =>
@@ -426,7 +426,7 @@ export default function ReportsPage() {
                                 {(item as StockMovement).reason || 'Sin razón'}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                                {(item as StockMovement).product_id.substring(0, 8)}...
+                                {(item as StockMovement).product_id.toString()}
                               </td>
                             </>
                           ) : (

@@ -32,6 +32,7 @@ export default function ProductMovementsPage() {
           name: 'Producto de Ejemplo',
           stock: 45,
           min_stock: 10,
+          user_id: 'user-uuid-1',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         };
@@ -44,7 +45,7 @@ export default function ProductMovementsPage() {
             type: "entrada",
             quantity: 50,
             reason: 'Compra inicial de inventario',
-            user_id: 1,
+            user_id: 'user-uuid-1',
             created_at: new Date().toISOString()
           },
           {
@@ -53,7 +54,7 @@ export default function ProductMovementsPage() {
             type: "salida",
             quantity: 3,
             reason: 'Venta a cliente',
-            user_id: 1,
+            user_id: 'user-uuid-1',
             created_at: new Date(Date.now() - 3600000).toISOString()
           },
           {
@@ -62,7 +63,7 @@ export default function ProductMovementsPage() {
             type: "salida",
             quantity: 2,
             reason: 'Venta a cliente',
-            user_id: 1,
+            user_id: 'user-uuid-1',
             created_at: new Date(Date.now() - 7200000).toISOString()
           },
           {
@@ -71,7 +72,7 @@ export default function ProductMovementsPage() {
             type: "ajuste",
             quantity: 45,
             reason: 'Ajuste por inventario físico',
-            user_id: 1,
+            user_id: 'user-uuid-1',
             created_at: new Date(Date.now() - 86400000).toISOString()
           }
         ];

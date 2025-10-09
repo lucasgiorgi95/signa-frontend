@@ -18,6 +18,7 @@ export default function EditProductPage() {
   const [formData, setFormData] = useState<ProductUpdate>({
     code: '',
     name: '',
+    description: '',
     stock: 0,
     min_stock: 0
   });
@@ -30,20 +31,22 @@ export default function EditProductPage() {
         // Simular carga del producto (en una implementación real usarías productService.getById)
         // Por ahora usamos datos mock
         const mockProduct: Product = {
-          id: params.id as string,
+          id: parseInt(params.id as string) || 1,
           code: '123456789',
           name: 'Producto de Ejemplo',
+          description: 'Descripción de ejemplo del producto',
           stock: 50,
           min_stock: 10,
-          userId: 'user-1',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
+          user_id: 'user-uuid-1',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         };
         
         setProduct(mockProduct);
         setFormData({
           code: mockProduct.code,
           name: mockProduct.name,
+          description: mockProduct.description,
           stock: mockProduct.stock,
           min_stock: mockProduct.min_stock
         });
@@ -59,7 +62,7 @@ export default function EditProductPage() {
     }
   }, [params.id]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -81,7 +84,7 @@ export default function EditProductPage() {
     }
 
     try {
-      const updatedProduct = await updateProduct(params.id as string, formData);
+      const updatedProduct = await updateProduct(parseInt(params.id as string), formData);
       if (updatedProduct) {
         router.push('/products');
       }
@@ -158,6 +161,22 @@ export default function EditProductPage() {
                   value={formData.name}
                   onChange={handleChange}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              {/* Descripción */}
+              <div>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                  Descripción (Opcional)
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  rows={3}
+                  value={formData.description || ''}
+                  onChange={handleChange}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Descripción del producto"
                 />
               </div>
 

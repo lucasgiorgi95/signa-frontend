@@ -49,7 +49,7 @@ export default function ProductsPage() {
     return matchesSearch;
   });
 
-  const handleDelete = async (id: string, name: string) => {
+  const handleDelete = async (id: number, name: string) => {
     if (confirm(`¿Estás seguro de que deseas eliminar "${name}"?`)) {
       const success = await deleteProduct(id);
       if (success) {

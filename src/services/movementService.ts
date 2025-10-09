@@ -66,7 +66,7 @@ export const movementService = {
     return movement;
   },
 
-  async getByProduct(productId: string, params?: { page?: number; limit?: number }): Promise<StockMovement[]> {
+  async getByProduct(productId: number, params?: { page?: number; limit?: number }): Promise<StockMovement[]> {
     let query = supabase
       .from('stock_movements')
       .select('*')
